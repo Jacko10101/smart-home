@@ -4,6 +4,7 @@ metadata:
   name: argocd
   namespace: argocd
 spec:
+  project: default
   source:
     repoURL: 'https://github.com/Jacko10101/smart-home.git'
     path: applications/argocd
@@ -11,4 +12,6 @@ spec:
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: argocd
-  project: default
+  service:
+    type: NodePort
+    nodePort: 30113

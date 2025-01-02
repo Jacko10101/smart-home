@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: home-assistant
+  namespace: home-assistant
+spec:
+  type: NodePort
+  ports:
+    - port: 8123
+      nodePort: 31471
+  selector:
+    app: home-assistant
