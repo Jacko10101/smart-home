@@ -5,6 +5,9 @@ metadata:
   namespace: zigbee
 data:
   configuration.yaml: |
+    mqtt:
+      base_topic: zigbee2mqtt
+      server: mqtt://mosquitto.mosquitto:1883
     serial:
       port: /dev/ttyUSB0
     frontend: true
