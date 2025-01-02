@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: home-assistant
+  namespace: argocd
+spec:
+  source:
+    repoURL: 'https://github.com/Jacko10101/smart-home.git'
+    path: applications/home-assistant
+    targetRevision: HEAD
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: home-assistant
+  project: default
