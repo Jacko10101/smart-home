@@ -1,14 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: prometheus
+  name: kube-prometheus-stack
   namespace: argocd
 spec:
+  project: default
   source:
     repoURL: 'https://github.com/Jacko10101/smart-home.git'
-    path: applications/prometheus
+    path: applications/kube-prometheus-stack
     targetRevision: HEAD
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: monitoring
-  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
