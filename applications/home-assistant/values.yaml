@@ -1,5 +1,5 @@
-ingress:
-  enabled: false
 service:
   type: NodePort
   nodePort: 31234
+config:
+  TZ: "Europe/London"
