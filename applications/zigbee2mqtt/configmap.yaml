@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zigbee2mqtt-config
+  namespace: zigbee
+data:
+  configuration.yaml: |
+    serial:
+      port: /dev/ttyUSB0
+    frontend: true
