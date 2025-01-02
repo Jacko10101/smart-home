@@ -1,0 +1,19 @@
+prometheus:
+  prometheusSpec:
+    retention: 30d
+  service:
+    type: NodePort
+    nodePort: 30090
+
+grafana:
+  adminUser: admin
+  adminPassword: prom-operator
+  service:
+    type: NodePort
+    nodePort: 31295
+
+alertmanager:
+  alertmanagerSpec:
+    service:
+      type: NodePort
+      nodePort: 30723
