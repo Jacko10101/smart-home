@@ -31,8 +31,7 @@ spec:
             - name: usb
               mountPath: /dev/ttyUSB0
             - name: config
-              mountPath: /app/data/configuration.yaml
-              subPath: configuration.yaml
+              mountPath: /app/data
             - name: data
               mountPath: /app/data
       volumes:

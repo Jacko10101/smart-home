@@ -11,3 +11,4 @@ data:
     serial:
       port: /dev/ttyUSB0
     frontend: true
+    permit_join: true
