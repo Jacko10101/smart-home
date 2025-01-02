@@ -13,11 +13,19 @@ spec:
       labels:
         app: home-assistant
     spec:
+      initContainers:
+        - name: init-config
+          image: busybox
+          command: ['sh', '-c', 'chown -R 1000:1000 /config']
+          volumeMounts:
+            - name: config
+              mountPath: /config
       containers:
         - name: home-assistant
           image: ghcr.io/home-assistant/home-assistant:stable
           ports:
             - containerPort: 8123
+              hostPort: 8123
           env:
             - name: TZ
               value: "Europe/London"
@@ -31,18 +39,9 @@ spec:
             requests:
               cpu: "500m"
               memory: "512Mi"
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 8123
-            initialDelaySeconds: 60
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 8123
-            initialDelaySeconds: 30
-            periodSeconds: 10
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
       volumes:
         - name: config
           persistentVolumeClaim:
