@@ -3,6 +3,8 @@ kind: Application
 metadata:
   name: kube-prometheus-stack
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   project: default
   source:
@@ -12,6 +14,12 @@ spec:
     helm:
       values: |
         fullnameOverride: "prometheus"
+        
+        # Disable admission webhooks completely
+        admissionWebhooks:
+          enabled: false
+          patch:
+            enabled: false
         
         grafana:
           enabled: true
@@ -30,7 +38,10 @@ spec:
           service:
             type: NodePort
             nodePort: 30723
-        
+
+        kubeStateMetrics:
+          enabled: true
+  
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: monitoring
@@ -41,5 +52,10 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
-      - Replace=true
-      - ApplyOutOfSyncOnly=true
+      - RespectIgnoreDifferences=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
