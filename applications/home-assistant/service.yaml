@@ -3,10 +3,15 @@ kind: Service
 metadata:
   name: home-assistant
   namespace: home-assistant
+  labels:
+    app: home-assistant
 spec:
   type: NodePort
   ports:
     - port: 8123
+      targetPort: 8123
       nodePort: 31471
+      protocol: TCP
+      name: http
   selector:
     app: home-assistant
