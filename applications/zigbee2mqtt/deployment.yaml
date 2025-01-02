@@ -31,7 +31,8 @@ spec:
             - name: usb
               mountPath: /dev/ttyUSB0
             - name: config
-              mountPath: /app/data
+              mountPath: /app/data/configuration.yaml
+              subPath: configuration.yaml
             - name: data
               mountPath: /app/data
       volumes:
@@ -39,8 +40,8 @@ spec:
           hostPath:
             path: /dev/ttyUSB0
         - name: config
-          persistentVolumeClaim:
-            claimName: zigbee2mqtt-config
+          configMap:
+            name: zigbee2mqtt-config
         - name: data
           persistentVolumeClaim:
             claimName: zigbee2mqtt-data
