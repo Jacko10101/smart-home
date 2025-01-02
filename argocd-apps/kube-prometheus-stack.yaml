@@ -6,9 +6,41 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/Jacko10101/smart-home.git'
-    path: applications/kube-prometheus-stack
-    targetRevision: HEAD
+    chart: kube-prometheus-stack
+    repoURL: https://prometheus-community.github.io/helm-charts
+    targetRevision: 67.5.0  
+    helm:
+      values: |
+        grafana:
+          adminUser: admin
+          adminPassword: prom-operator
+          service:
+            type: NodePort
+            nodePort: 31295
+
+        alertmanager:
+          config:
+            global:
+              resolve_timeout: 5m
+          alertmanagerSpec:
+            service:
+              type: NodePort
+              nodePort: 30723
+
+        prometheus:
+          prometheusSpec:
+            retention: 30d
+            service:
+              type: NodePort
+              port: 9090
+              nodePort: 30090
+              targetPort: 9090
+
+        nodeExporter:
+          enabled: true
+
+        kubeStateMetrics:
+          enabled: true
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: monitoring
