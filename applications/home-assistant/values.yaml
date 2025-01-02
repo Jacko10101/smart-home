@@ -1,0 +1,5 @@
+ingress:
+  enabled: false
+service:
+  type: NodePort
+  nodePort: 31234
