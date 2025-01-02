@@ -13,13 +13,6 @@ spec:
       labels:
         app: home-assistant
     spec:
-      initContainers:
-        - name: init-config
-          image: busybox
-          command: ['sh', '-c', 'chown -R 1000:1000 /config']
-          volumeMounts:
-            - name: config
-              mountPath: /config
       containers:
         - name: home-assistant
           image: ghcr.io/home-assistant/home-assistant:stable
@@ -39,9 +32,6 @@ spec:
             requests:
               cpu: "500m"
               memory: "512Mi"
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
       volumes:
         - name: config
           persistentVolumeClaim:
