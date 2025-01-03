@@ -22,6 +22,9 @@ data:
         friendly_name: 'hallway_sensor'
         description: 'SONOFF SNZB-02D Temperature & Humidity LCD Sensor'
         temperature_display_unit: celsius
+      '0x00124b002fcccadd':
+        friendly_name: 'bedroom_motion'
+        description: 'SONOFF SNZB-03 Motion Sensor'
     device_options:
       temperature_precision: 1
       humidity_precision: 1
