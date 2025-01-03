@@ -13,6 +13,15 @@ spec:
       labels:
         app: zigbee2mqtt
     spec:
+      initContainers:
+        - name: init-data-dir
+          image: busybox
+          command: ['sh', '-c', 'cp /config/configuration.yaml /data/ && chmod 777 /data/configuration.yaml']
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: data
+              mountPath: /data
       containers:
         - name: zigbee2mqtt
           image: koenkk/zigbee2mqtt
@@ -30,9 +39,6 @@ spec:
           volumeMounts:
             - name: usb
               mountPath: /dev/ttyUSB0
-            - name: config
-              mountPath: /app/data/configuration.yaml
-              subPath: configuration.yaml
             - name: data
               mountPath: /app/data
       volumes:
