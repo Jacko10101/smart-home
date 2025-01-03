@@ -11,11 +11,16 @@ data:
     serial:
       port: /dev/ttyUSB0
       adapter: zstack
-      baudrate: 115200
-      rtscts: false
     frontend: true
     permit_join: true
     homeassistant: true
+    advanced:
+      pan_id: 6754
+      channel: 11
+      network_key: [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 13]
+      adapter_concurrent: 16
+      adapter_delay: 100
+      transmit_power: 20
     devices:
       '0x08ddebfffeee63e6':
         friendly_name: 'living_room_sensor'
@@ -32,11 +37,3 @@ data:
       temperature_precision: 1
       humidity_precision: 1
       temperature_unit: celsius
-    advanced:
-      log_level: debug
-      channel: 11
-      pan_id: GENERATE
-      network_key: GENERATE
-      transmit_power: 20
-      adapter_delay: 100
-      availability: true
