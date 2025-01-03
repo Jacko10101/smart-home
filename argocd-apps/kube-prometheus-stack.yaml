@@ -14,7 +14,6 @@ spec:
     helm:
       values: |
         fullnameOverride: "prometheus"
-        # Disable admission webhooks completely
         admissionWebhooks:
           enabled: false
           patch:
@@ -30,22 +29,13 @@ spec:
             type: NodePort
             nodePort: 30090
           prometheusSpec:
-            additionalServiceMonitors:
-              - name: home-assistant
-                namespace: monitoring
-                selector:
-                  matchLabels:
-                    app: home-assistant
-                namespaceSelector:
-                  matchNames:
-                    - home-assistant
-                endpoints:
-                  - port: http
-                    path: /api/prometheus
-                    interval: 30s
-                    bearerTokenSecret:
-                      name: home-assistant-token
-                      key: token
+            additionalScrapeConfigs:
+              - job_name: 'home-assistant'
+                scrape_interval: 30s
+                static_configs:
+                  - targets: ['home-assistant.home-assistant.svc.cluster.local:8123']
+                metrics_path: /api/prometheus
+                bearer_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI4ZjI5MDg1ZDg3MTc0ZTdjYTY2M2E4MGMyOTg5NzE4NCIsImlhdCI6MTczNTkxMjE3NywiZXhwIjoyMDUxMjcyMTc3fQ.26wgTypbY0PYnD_3lVPMruJegNpXEDkPLtVljZhpH4s"
         alertmanager:
           enabled: true
           service:
