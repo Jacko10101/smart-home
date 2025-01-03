@@ -10,7 +10,9 @@ data:
       server: mqtt://mosquitto.mosquitto:1883
     serial:
       port: /dev/ttyUSB0
-    frontend: true
+    frontend:
+      port: 8080
+      host: 0.0.0.0
     permit_join: true
     homeassistant: true
     devices:
