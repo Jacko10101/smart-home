@@ -19,5 +19,4 @@ data:
     device_options:
       temperature_precision: 1
       humidity_precision: 1
-    availability:
-      active: true
+    availability: true
