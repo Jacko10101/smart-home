@@ -41,10 +41,14 @@ spec:
               mountPath: /dev/ttyUSB0
             - name: data
               mountPath: /app/data
+          env:
+            - name: TZ
+              value: "Europe/London"
       volumes:
         - name: usb
           hostPath:
             path: /dev/ttyUSB0
+            type: CharDevice
         - name: config
           configMap:
             name: zigbee2mqtt-config
