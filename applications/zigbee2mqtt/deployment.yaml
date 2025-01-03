@@ -36,13 +36,6 @@ spec:
               cpu: "250m"
           securityContext:
             privileged: true
-          env:
-            - name: ZIGBEE2MQTT_CONFIG_SERIAL_PORT
-              value: /dev/ttyUSB0
-            - name: ZIGBEE2MQTT_CONFIG_FRONTEND
-              value: "true"
-            - name: ZIGBEE2MQTT_CONFIG_ADVANCED_LOG_LEVEL
-              value: "debug"
           volumeMounts:
             - name: usb
               mountPath: /dev/ttyUSB0
