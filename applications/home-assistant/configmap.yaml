@@ -8,10 +8,6 @@ data:
     # Core Configuration
     default_config:
 
-    # Prometheus Integration
-    prometheus:
-      namespace: homeassistant
-
     # HTTP Settings
     http:
       server_host: 0.0.0.0
@@ -21,22 +17,10 @@ data:
         - 10.0.0.0/8
         - 172.16.0.0/12
         - 192.168.0.0/16
-
-    # Allow Prometheus endpoint without authentication
-    http:
       cors_allowed_origins:
         - http://192.168.1.235:31123
-      use_x_forwarded_for: true
-      trusted_proxies:
-        - 10.0.0.0/8
-        - 172.16.0.0/12
-        - 192.168.0.0/16
 
-    # API Configuration
-    api:
-      api_password: ""
-
-    # Authentication Providers
+    # Authentication Configuration
     auth_providers:
       - type: homeassistant
       - type: trusted_networks
@@ -44,28 +28,8 @@ data:
           - 10.0.0.0/8
           - 172.16.0.0/12
           - 192.168.0.0/16
-        allow_bypass_login: true
 
-    # Configure authentication exemptions
-    http:
-      use_x_forwarded_for: true
-      trusted_proxies:
-        - 10.0.0.0/8
-        - 172.16.0.0/12
-        - 192.168.0.0/16
-      ip_ban_enabled: true
-      login_attempts_threshold: 5
-      auth_providers:
-        - type: trusted_networks
-          trusted_networks:
-            - 10.0.0.0/8
-            - 172.16.0.0/12
-            - 192.168.0.0/16
-          allow_bypass_login: true
-      cors_allowed_origins:
-        - http://192.168.1.235:31123
-
-    # Explicitly allow Prometheus endpoint without auth
+    # Prometheus Integration
     prometheus:
       namespace: homeassistant
       require_auth: false
