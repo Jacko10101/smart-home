@@ -5,7 +5,6 @@ metadata:
   namespace: home-assistant
   labels:
     app: home-assistant
-    release: prometheus
 spec:
   type: NodePort
   ports:
