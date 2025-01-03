@@ -17,6 +17,9 @@ data:
       '0x08ddebfffeee63e6':
         friendly_name: 'living_room_sensor'
         description: 'SONOFF SNZB-02D Temperature & Humidity LCD Sensor'
+      '0x8c65a3fffee9acd4':
+        friendly_name: 'downstairs_hallway_sensor'
+        description: 'SONOFF SNZB-02D Temperature & Humidity LCD Sensor'
     device_options:
       temperature_precision: 1
       humidity_precision: 1
