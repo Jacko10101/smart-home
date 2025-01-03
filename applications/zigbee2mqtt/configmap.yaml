@@ -12,6 +12,7 @@ data:
       port: /dev/ttyUSB0
     frontend: true
     permit_join: true
+    homeassistant: true
     devices:
       '0x08ddebfffeee63e6':
         friendly_name: 'living_room_sensor'
