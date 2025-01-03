@@ -10,7 +10,7 @@ data:
       server: mqtt://mosquitto.mosquitto:1883
     serial:
       port: /dev/ttyUSB0
-      adapter: sonoff
+      adapter: ezsp
     frontend: true
     permit_join: true
     homeassistant: true
