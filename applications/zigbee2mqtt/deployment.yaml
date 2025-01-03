@@ -22,6 +22,14 @@ spec:
               mountPath: /config
             - name: data
               mountPath: /data
+        - name: fix-usb-permissions
+          image: busybox
+          command: ['sh', '-c', 'chown root:dialout /dev_host/ttyUSB0 && chmod 660 /dev_host/ttyUSB0']
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: host-dev
+              mountPath: /dev_host
       containers:
         - name: zigbee2mqtt
           image: koenkk/zigbee2mqtt
@@ -36,6 +44,8 @@ spec:
               cpu: "250m"
           securityContext:
             privileged: true
+            runAsUser: 0
+            runAsGroup: 20  # dialout group
           volumeMounts:
             - name: usb
               mountPath: /dev/ttyUSB0
@@ -49,6 +59,9 @@ spec:
           hostPath:
             path: /dev/ttyUSB0
             type: CharDevice
+        - name: host-dev
+          hostPath:
+            path: /dev
         - name: config
           configMap:
             name: zigbee2mqtt-config

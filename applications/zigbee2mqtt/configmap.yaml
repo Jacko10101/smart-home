@@ -10,6 +10,7 @@ data:
       server: mqtt://mosquitto.mosquitto:1883
     serial:
       port: /dev/ttyUSB0
+      adapter: sonoff
     frontend: true
     permit_join: true
     homeassistant: true
@@ -29,4 +30,7 @@ data:
       temperature_precision: 1
       humidity_precision: 1
       temperature_unit: celsius
+    advanced:
+      log_level: debug
+      channel: 15
     availability: true
