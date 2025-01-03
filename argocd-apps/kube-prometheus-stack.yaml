@@ -14,34 +14,45 @@ spec:
     helm:
       values: |
         fullnameOverride: "prometheus"
-        
         # Disable admission webhooks completely
         admissionWebhooks:
           enabled: false
           patch:
             enabled: false
-        
         grafana:
           enabled: true
           service:
             type: NodePort
             nodePort: 31295
-        
         prometheus:
           enabled: true
           service:
             type: NodePort
             nodePort: 30090
-        
+          prometheusSpec:
+            additionalServiceMonitors:
+              - name: home-assistant
+                namespace: monitoring
+                selector:
+                  matchLabels:
+                    app: home-assistant
+                namespaceSelector:
+                  matchNames:
+                    - home-assistant
+                endpoints:
+                  - port: http
+                    path: /api/prometheus
+                    interval: 30s
+                    bearerTokenSecret:
+                      name: home-assistant-token
+                      key: token
         alertmanager:
           enabled: true
           service:
             type: NodePort
             nodePort: 30723
-
         kubeStateMetrics:
           enabled: true
-  
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: monitoring
