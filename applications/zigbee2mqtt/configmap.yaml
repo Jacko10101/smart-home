@@ -10,8 +10,8 @@ data:
       server: mqtt://mosquitto.mosquitto:1883
     serial:
       port: /dev/ttyUSB0
-      adapter: ember
-      baudrate: 57600
+      adapter: zstack
+      baudrate: 115200
       rtscts: false
     frontend: true
     permit_join: true
@@ -34,8 +34,9 @@ data:
       temperature_unit: celsius
     advanced:
       log_level: debug
-      channel: 15
-      adapter_concurrent: 1
-      adapter_delay: 250
-      soft_reset_timeout: 3000
+      channel: 11
+      pan_id: GENERATE
+      network_key: GENERATE
+      transmit_power: 20
+      adapter_delay: 100
       availability: true
