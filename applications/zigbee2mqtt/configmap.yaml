@@ -10,7 +10,9 @@ data:
       server: mqtt://mosquitto.mosquitto:1883
     serial:
       port: /dev/ttyUSB0
-      adapter: ezsp
+      adapter: ember
+      baudrate: 115200
+      rtscts: false
     frontend: true
     permit_join: true
     homeassistant: true
@@ -33,4 +35,7 @@ data:
     advanced:
       log_level: debug
       channel: 15
+      adapter_concurrent: 8
+      rtscts: false
+      adapter_delay: 100
     availability: true
