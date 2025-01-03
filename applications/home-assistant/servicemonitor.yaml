@@ -12,6 +12,10 @@ spec:
   endpoints:
     - port: http
       path: /api/prometheus
+      interval: 30s
+      bearerTokenSecret:
+        name: home-assistant-token
+        key: token
   namespaceSelector:
     matchNames:
       - home-assistant
