@@ -12,25 +12,11 @@ data:
     http:
       server_host: 0.0.0.0
       server_port: 8123
-      use_x_forwarded_for: true
-      trusted_proxies:
-        - 10.0.0.0/8
-        - 172.16.0.0/12
-        - 192.168.0.0/16
-      cors_allowed_origins:
-        - http://192.168.1.235:31123
-
-    # Home Assistant Configuration
-    homeassistant:
-      auth_providers:
-        - type: homeassistant
-        - type: trusted_networks
-          trusted_networks:
-            - 10.0.0.0/8
-            - 172.16.0.0/12
-            - 192.168.0.0/16
 
     # Prometheus Integration
     prometheus:
       namespace: homeassistant
       require_auth: false
+
+    # Basic auth configuration
+    api:
