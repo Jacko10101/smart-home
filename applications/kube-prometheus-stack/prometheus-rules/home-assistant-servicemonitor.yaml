@@ -6,13 +6,18 @@ metadata:
   labels:
     release: prometheus
 spec:
+  jobLabel: home-assistant
   selector:
     matchLabels:
       app: home-assistant
+  namespaceSelector:
+    matchNames:
+      - home-assistant
   endpoints:
     - port: http
       path: /api/prometheus
       interval: 30s
-  namespaceSelector:
-    matchNames:
-      - home-assistant
+      scrapeTimeout: 30s
+      bearerTokenSecret:
+        name: home-assistant-token
+        key: token
