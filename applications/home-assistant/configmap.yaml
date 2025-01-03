@@ -20,14 +20,15 @@ data:
       cors_allowed_origins:
         - http://192.168.1.235:31123
 
-    # Authentication Configuration
-    auth_providers:
-      - type: homeassistant
-      - type: trusted_networks
-        trusted_networks:
-          - 10.0.0.0/8
-          - 172.16.0.0/12
-          - 192.168.0.0/16
+    # Home Assistant Configuration
+    homeassistant:
+      auth_providers:
+        - type: homeassistant
+        - type: trusted_networks
+          trusted_networks:
+            - 10.0.0.0/8
+            - 172.16.0.0/12
+            - 192.168.0.0/16
 
     # Prometheus Integration
     prometheus:
