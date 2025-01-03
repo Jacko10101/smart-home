@@ -5,6 +5,7 @@ metadata:
   namespace: home-assistant
   labels:
     app: home-assistant
+    release: prometheus
 spec:
   ports:
     - port: 8123

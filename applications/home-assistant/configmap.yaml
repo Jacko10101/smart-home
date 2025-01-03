@@ -5,6 +5,8 @@ metadata:
   namespace: home-assistant
 data:
   configuration.yaml: |
+    default_config:
+
     prometheus:
       namespace: homeassistant
 
