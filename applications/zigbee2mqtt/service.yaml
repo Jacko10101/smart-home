@@ -5,6 +5,8 @@ metadata:
   namespace: zigbee
   annotations:
     tailscale.com/expose: "true"
+  labels:
+    app.kubernetes.io/instance: zigbee2mqtt
 spec:
   type: ClusterIP
   ports:
