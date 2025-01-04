@@ -18,16 +18,20 @@ spec:
           enabled: false
           patch:
             enabled: false
+        
         grafana:
           enabled: true
           service:
-            type: NodePort
-            nodePort: 31295
+            type: ClusterIP
+            annotations:
+              tailscale.com/expose: "true"
+          
         prometheus:
           enabled: true
           service:
-            type: NodePort
-            nodePort: 30090
+            type: ClusterIP
+            annotations:
+              tailscale.com/expose: "true"
           prometheusSpec:
             additionalScrapeConfigs:
               - job_name: 'home-assistant'
@@ -36,13 +40,17 @@ spec:
                   - targets: ['home-assistant.home-assistant.svc.cluster.local:8123']
                 metrics_path: /api/prometheus
                 bearer_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI4ZjI5MDg1ZDg3MTc0ZTdjYTY2M2E4MGMyOTg5NzE4NCIsImlhdCI6MTczNTkxMjE3NywiZXhwIjoyMDUxMjcyMTc3fQ.26wgTypbY0PYnD_3lVPMruJegNpXEDkPLtVljZhpH4s"
+        
         alertmanager:
           enabled: true
           service:
-            type: NodePort
-            nodePort: 30723
+            type: ClusterIP
+            annotations:
+              tailscale.com/expose: "true"
+        
         kubeStateMetrics:
           enabled: true
+  
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: monitoring

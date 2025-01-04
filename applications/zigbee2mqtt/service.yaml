@@ -3,10 +3,12 @@ kind: Service
 metadata:
   name: zigbee2mqtt
   namespace: zigbee
+  annotations:
+    tailscale.com/expose: "true"
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
     - port: 8080
-      nodePort: 31678
+      targetPort: 8080
   selector:
     app: zigbee2mqtt

@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tailscale
+  namespace: tailscale
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tailscale
+  template:
+    metadata:
+      labels:
+        app: tailscale
+    spec:
+      serviceAccountName: tailscale
+      containers:
+      - name: tailscale
+        image: tailscale/tailscale:latest
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+        env:
+        - name: TS_KUBE_SECRET
+          value: tailscale-state
+        - name: TS_USERSPACE
+          value: "false"
+        - name: TS_AUTH_KEY
+          valueFrom:
+            secretRef:
+              name: tailscale-auth
+              key: auth_key
+        volumeMounts:
+        - name: devnet
+          mountPath: /dev/net/tun
+      volumes:
+      - name: devnet
+        hostPath:
+          path: /dev/net/tun

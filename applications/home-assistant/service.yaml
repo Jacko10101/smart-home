@@ -3,14 +3,13 @@ kind: Service
 metadata:
   name: home-assistant
   namespace: home-assistant
-  labels:
-    app: home-assistant
+  annotations:
+    tailscale.com/expose: "true"
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
     - port: 8123
       targetPort: 8123
-      nodePort: 31123
       name: http
   selector:
     app: home-assistant
