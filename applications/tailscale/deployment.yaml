@@ -22,21 +22,19 @@ spec:
           value: "tailscale-state"
         - name: TS_USERSPACE
           value: "false"
+        - name: TS_HOSTNAME
+          value: "k3s-proxy"
         - name: TS_AUTH_KEY
           valueFrom:
             secretKeyRef:
               name: tailscale-auth
               key: auth_key
         - name: TS_EXTRA_ARGS
-          value: "--accept-routes --advertise-routes=10.43.0.0/16"
+          value: "--accept-routes=true --advertise-routes=10.43.0.0/16"
         - name: POD_NAME
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        - name: POD_UID
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.uid
         securityContext:
           capabilities:
             add:

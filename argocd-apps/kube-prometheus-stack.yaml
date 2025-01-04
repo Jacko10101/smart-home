@@ -22,17 +22,22 @@ spec:
         grafana:
           enabled: true
           service:
-            type: LoadBalancer
+            type: ClusterIP
             annotations:
               tailscale.com/expose: "true"
-        
+          serviceMonitor:
+            enabled: true
+
         prometheus:
-          enabled: true
+          thanosService:
+            enabled: false
           service:
-            type: LoadBalancer
+            type: ClusterIP
             annotations:
               tailscale.com/expose: "true"
           prometheusSpec:
+            routePrefix: /
+            serviceMonitorSelector: {}
             additionalScrapeConfigs:
               - job_name: 'home-assistant'
                 scrape_interval: 30s
@@ -40,11 +45,11 @@ spec:
                   - targets: ['home-assistant.home-assistant.svc.cluster.local:8123']
                 metrics_path: /api/prometheus
                 bearer_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI4ZjI5MDg1ZDg3MTc0ZTdjYTY2M2E4MGMyOTg5NzE4NCIsImlhdCI6MTczNTkxMjE3NywiZXhwIjoyMDUxMjcyMTc3fQ.26wgTypbY0PYnD_3lVPMruJegNpXEDkPLtVljZhpH4s"
-        
+
         alertmanager:
           enabled: true
           service:
-            type: LoadBalancer
+            type: ClusterIP
             annotations:
               tailscale.com/expose: "true"
         
