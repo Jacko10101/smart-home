@@ -5,13 +5,12 @@ metadata:
   namespace: home-assistant
   annotations:
     tailscale.com/expose: "true"
-  labels:
-    app.kubernetes.io/instance: home-assistant
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
-    - name: http
-      port: 8123
+    - port: 8123
       targetPort: 8123
+      nodePort: 31123
+      name: http
   selector:
     app: home-assistant

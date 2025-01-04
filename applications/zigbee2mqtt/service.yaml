@@ -5,12 +5,11 @@ metadata:
   namespace: zigbee
   annotations:
     tailscale.com/expose: "true"
-  labels:
-    app.kubernetes.io/instance: zigbee2mqtt
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
     - port: 8080
       targetPort: 8080
+      nodePort: 31678
   selector:
     app: zigbee2mqtt

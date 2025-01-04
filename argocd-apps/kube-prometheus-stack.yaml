@@ -22,19 +22,19 @@ spec:
         grafana:
           enabled: true
           service:
-            type: ClusterIP
+            type: NodePort
+            nodePort: 31300
             annotations:
               tailscale.com/expose: "true"
-          serviceMonitor:
-            enabled: true
 
         prometheus:
-          thanosService:
-            enabled: false
           service:
-            type: ClusterIP
+            type: NodePort
+            nodePort: 31090
             annotations:
               tailscale.com/expose: "true"
+          prometheusSpec:
+            routePrefix: /
           prometheusSpec:
             routePrefix: /
             serviceMonitorSelector: {}
@@ -49,7 +49,8 @@ spec:
         alertmanager:
           enabled: true
           service:
-            type: ClusterIP
+            type: NodePort
+            nodePort: 30723
             annotations:
               tailscale.com/expose: "true"
         
