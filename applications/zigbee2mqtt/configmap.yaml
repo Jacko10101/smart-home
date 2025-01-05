@@ -36,6 +36,12 @@ data:
       '0x00124b002fa64513':
         friendly_name: 'bedroom_window'
         description: 'SONOFF SNZB-04 Contact Sensor'
+      '0xa4c138482ee543a2':
+        friendly_name: 'hallway_lamp'
+        description: 'Innr SP 242 Smart Plug with energy monitoring'
+        report:
+          energy: true
+          power: true
     device_options:
       temperature_precision: 1
       humidity_precision: 1
