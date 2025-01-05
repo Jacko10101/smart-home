@@ -24,7 +24,7 @@ spec:
               mountPath: /data
         - name: fix-usb-permissions
           image: busybox
-          command: ['sh', '-c', 'chmod 666 /dev_host/ttyUSB0 && chown -R 1000:1000 /data']
+          command: ['sh', '-c', 'chown root:18 /dev_host/ttyUSB0 && chmod 660 /dev_host/ttyUSB0 && chown -R 1000:1000 /data']
           securityContext:
             privileged: true
           volumeMounts:
@@ -46,6 +46,8 @@ spec:
               cpu: "250m"
           securityContext:
             privileged: true
+            runAsUser: 1000
+            runAsGroup: 18
           volumeMounts:
             - name: usb
               mountPath: /dev/ttyUSB0
