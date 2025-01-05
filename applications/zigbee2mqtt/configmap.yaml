@@ -53,7 +53,7 @@ data:
         description: 'Hue White and Color Ambiance E14'
       
       '0x08ddebfffeee63e6':
-        friendly_name: 'living_room_sensor'
+        friendly_name: 'bedroom_sensor'
         description: 'SONOFF SNZB-02D Temperature & Humidity LCD Sensor'
         temperature_display_unit: celsius
       '0x8c65a3fffee9acd4':
