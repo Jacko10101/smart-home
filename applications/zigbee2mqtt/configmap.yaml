@@ -8,12 +8,21 @@ data:
     mqtt:
       base_topic: zigbee2mqtt
       server: mqtt://mosquitto.mosquitto:1883
+      version: 5
     serial:
       port: /dev/ttyUSB0
       adapter: zstack
     frontend: true
     permit_join: true
-    homeassistant: true
+    
+    # Home Assistant integration settings
+    homeassistant:
+      discovery: true
+      discovery_prefix: homeassistant
+      legacy_triggers: false
+      legacy_entity_attributes: false
+      status_topic: homeassistant/status
+
     advanced:
       pan_id: 6754
       channel: 11
@@ -21,6 +30,8 @@ data:
       adapter_concurrent: 16
       adapter_delay: 100
       transmit_power: 20
+      log_level: debug  # Added for troubleshooting
+
     devices:
       '0x001788010d5bade1':
         friendly_name: 'bedroom_middle_1'
@@ -74,7 +85,7 @@ data:
         report:
           energy: true
           power: true
-    
+
     device_options:
       temperature_precision: 1
       humidity_precision: 1
