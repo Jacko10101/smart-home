@@ -42,6 +42,18 @@ data:
         report:
           energy: true
           power: true
+      '0xa4c1383a84e1e09d':
+        friendly_name: 'kitchen_heater'
+        description: 'Innr SP 242 Smart Plug with energy monitoring'
+        report:
+          energy: true
+          power: true
+      '0xa4c138cb42876cba':
+        friendly_name: 'dining_room_tv'
+        description: 'Innr SP 242 Smart Plug with energy monitoring'
+        report:
+          energy: true
+          power: true
     device_options:
       temperature_precision: 1
       humidity_precision: 1
