@@ -20,3 +20,15 @@ data:
 
     # Basic auth configuration
     api:
+
+    # Light Groups
+    light:
+      - platform: group
+        name: bedroom_group
+        entities:
+          - light.0x001788010d5badaa  # Left 1
+          - light.0x001788010d8f4a45  # Left 2
+          - light.0x001788010d5bade1  # Middle 1
+          - light.0x001788010d8f4a8b  # Middle 2
+          - light.0x001788010d5badcf  # Right 1
+          - light.0x001788010d5badd3  # Right 2
