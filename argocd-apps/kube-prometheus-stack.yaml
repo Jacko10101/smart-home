@@ -44,7 +44,7 @@ spec:
                 static_configs:
                   - targets: ['home-assistant.home-assistant.svc.cluster.local:8123']
                 metrics_path: /api/prometheus
-                bearer_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI4ZjI5MDg1ZDg3MTc0ZTdjYTY2M2E4MGMyOTg5NzE4NCIsImlhdCI6MTczNTkxMjE3NywiZXhwIjoyMDUxMjcyMTc3fQ.26wgTypbY0PYnD_3lVPMruJegNpXEDkPLtVljZhpH4s"
+                bearer_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI1YWIyM2Q1OGYzZTM0YTQwOWJkMTI0NmYzZjA0OTg3YyIsImlhdCI6MTczNjExMTM2NiwiZXhwIjoyMDUxNDcxMzY2fQ.65KR65-QVqunPkDD21GRHiiVxwXxaJEfnPZP3MWBtgg"
 
         alertmanager:
           enabled: true
