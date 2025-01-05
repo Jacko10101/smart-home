@@ -16,19 +16,19 @@ data:
     # Prometheus Integration
     prometheus:
       namespace: homeassistant
-      require_auth: false
+      require_auth: true  # Enabled authentication
 
-    # Basic auth configuration
+    # API Settings
     api:
 
-    # Light Groups
-    light:
-      - platform: group
-        name: bedroom_group
+    # Group Configuration
+    group:
+      bedroom_lights:
+        name: Bedroom Lights
         entities:
-          - light.0x001788010d5badaa  # Left 1
-          - light.0x001788010d8f4a45  # Left 2
-          - light.0x001788010d5bade1  # Middle 1
-          - light.0x001788010d8f4a8b  # Middle 2
-          - light.0x001788010d5badcf  # Right 1
-          - light.0x001788010d5badd3  # Right 2
+          - light.bedroom_left_1
+          - light.bedroom_left_2
+          - light.bedroom_middle_1
+          - light.bedroom_middle_2
+          - light.bedroom_right_1
+          - light.bedroom_right_2
