@@ -22,6 +22,25 @@ data:
       adapter_delay: 100
       transmit_power: 20
     devices:
+      '0x001788010d5bade1':
+        friendly_name: 'bedroom_middle_1'
+        description: 'Hue White and Color Ambiance E14'
+      '0x001788010d8f4a8b':
+        friendly_name: 'bedroom_middle_2'
+        description: 'Hue White and Color Ambiance E14'
+      '0x001788010d5badaa':
+        friendly_name: 'bedroom_left_1'
+        description: 'Hue White and Color Ambiance E14'
+      '0x001788010d8f4a45':
+        friendly_name: 'bedroom_left_2'
+        description: 'Hue White and Color Ambiance E14'
+      '0x001788010d5badcf':
+        friendly_name: 'bedroom_right_1'
+        description: 'Hue White and Color Ambiance E14'
+      '0x001788010d5badd3':
+        friendly_name: 'bedroom_right_2'
+        description: 'Hue White and Color Ambiance E14'
+      
       '0x08ddebfffeee63e6':
         friendly_name: 'living_room_sensor'
         description: 'SONOFF SNZB-02D Temperature & Humidity LCD Sensor'
@@ -36,6 +55,7 @@ data:
       '0x00124b002fa64513':
         friendly_name: 'bedroom_window'
         description: 'SONOFF SNZB-04 Contact Sensor'
+
       '0xa4c138482ee543a2':
         friendly_name: 'hallway_lamp'
         description: 'Innr SP 242 Smart Plug with energy monitoring'
@@ -54,6 +74,7 @@ data:
         report:
           energy: true
           power: true
+    
     device_options:
       temperature_precision: 1
       humidity_precision: 1
