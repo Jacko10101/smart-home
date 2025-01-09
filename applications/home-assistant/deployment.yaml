@@ -28,6 +28,12 @@ spec:
             - name: ha-config
               mountPath: /config/configuration.yaml
               subPath: configuration.yaml
+            - name: ha-config
+              mountPath: /config/scenes.yaml
+              subPath: scenes.yaml
+            - name: ha-config
+              mountPath: /config/automations.yaml
+              subPath: automations.yaml
           resources:
             limits:
               cpu: "1"
