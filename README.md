@@ -25,112 +25,91 @@ Currently integrated devices:
 
 | Location | Device | Type | Purpose |
 |----------|--------|------|---------|
-| Living Room | SONOFF SNZB-02D | Temperature/Humidity | Environmental monitoring |
-| Hallway | SONOFF SNZB-02D | Temperature/Humidity | Environmental monitoring |
+| Living Room | SONOFF SNZB-02D | Temperature/Humidity LCD | Environmental monitoring |
+| Hallway | SONOFF SNZB-02D | Temperature/Humidity LCD | Environmental monitoring |
 | Bedroom | SONOFF SNZB-03 | Motion Sensor | Presence detection |
 | Bedroom | SONOFF SNZB-04 | Contact Sensor | Window monitoring |
+| Bedroom | 6x Philips Hue | Color E14 Bulbs | Ambient lighting |
+| Hallway | Innr SP 242 | Smart Plug | Lamp control + energy monitoring |
+| Kitchen | Innr SP 242 | Smart Plug | Heater control + energy monitoring |
+| Dining Room | Innr SP 242 | Smart Plug | TV control + energy monitoring |
+| Outdoor | Reolink | Security Camera | Surveillance with solar panel |
+
+## 🎨 Lighting Scenes
+
+The bedroom features sophisticated lighting control with predefined scenes:
+- **Wake Up**: Gradual 20-minute brightness increase with warm light
+- **Daylight**: Bright, cool lighting for productivity
+- **Gaming**: Immersive RGB lighting with blue/red contrast
+- **Movie**: Minimal ambient lighting for viewing
+- **Evening Relax**: Warm, dimmed lighting for winding down
+- **Night Reading**: Focused reading light with ambient background
+- **Party**: Full RGB color mix for entertainment
 
 ## 🚀 Core Components
 
 ### 1. ArgoCD (GitOps Engine)
 - Automatically syncs your Git repository with the cluster
 - Manages all application deployments
-- Enables version control for your entire home automation setup
-- Accessible via: `https://<local-ip>:30113` or `http://<tailscale-ip>:30113`
+- Accessible via Tailscale
 
 ### 2. Home Assistant
 - Central automation hub
-- Custom configuration via ConfigMap
-- Persistent storage for settings and history
-- Prometheus metrics integration
-- Accessible via: `http://<local-ip>:31123` or `http://<tailscale-ip>:31123`
+- Custom lighting scenes
+- Power monitoring and energy tracking
+- Temperature/humidity monitoring
+- Accessible via Tailscale
 
 ### 3. Zigbee2mqtt
-- Manages all Zigbee devices
+- Manages all Zigbee devices (lights, sensors, plugs)
 - Web interface for device management
 - Direct MQTT integration with Home Assistant
-- Accessible via: `http://<local-ip>:31678` or `http://<tailscale-ip>:31678`
+- Accessible via Tailscale
 
 ### 4. Mosquitto (MQTT Broker)
 - Message broker for device communication
 - Enables reliable IoT device messaging
 - Configured for local-only access
-- Runs on standard port 1883
 
 ### 5. Monitoring Stack
-- **Prometheus**: Metrics collection and storage
-  - 30-day retention
-  - Home Assistant integration
-  - Accessible via: `http://<local-ip>:30090`
-- **Grafana**: Visualization and dashboards
-  - Accessible via: `http://<local-ip>:31295`
-- **Alertmanager**: Alert handling
-  - Accessible via: `http://<local-ip>:30723`
+- **Prometheus & Grafana**:
+  - Environmental data visualization
+  - Power usage monitoring
+  - Device status tracking
+  - Temperature trends
+  - Light usage patterns
 
-## 🛠 Installation
+## 📊 Current Monitoring
 
-1. **Prerequisites**
-   ```bash
-   # Install K3s
-   curl -sfL https://get.k3s.io | sh -
-
-   # Install Helm (required for kube-prometheus-stack)
-   curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-   ```
-
-2. **Deploy ArgoCD**
-   ```bash
-   kubectl create namespace argocd
-   kubectl apply -f argocd-apps/argocd.yaml
-   ```
-
-3. **Configure Tailscale**
-   ```bash
-   curl -fsSL https://tailscale.com/install.sh | sh
-   sudo tailscale up --advertise-routes=10.43.0.0/16 --accept-routes
-   ```
-
-4. **Verify Deployments**
-   ```bash
-   kubectl get applications -n argocd
-   kubectl get pods -A
-   ```
-
-## 📊 Monitoring & Management
-
-### Current Metrics
-- Device battery levels
-- Temperature and humidity readings
+- Real-time power consumption for smart plugs
+- Temperature and humidity trends
 - Motion detection events
-- Window state changes
-- System resource usage
-
-### Grafana Dashboards
-- Home Assistant metrics
-- Environmental data trends
-- Device status overview
+- Window state monitoring
+- Light usage patterns
+- Device battery levels
 - System performance metrics
 
-## 🔒 Security Considerations
+## 🔒 Security Features
 
 - All services accessible only through Tailscale VPN
 - No ports exposed to the internet
 - Regular automatic updates via GitOps
 - UPS protection against power failures
 - Local-only data storage
+- Encrypted remote access
 
 ## 🎯 Future Plans
 
 ### Short Term
-- [ ] Integrate Philips Hue lighting system
-- [ ] Add Innr smart plugs with energy monitoring
-- [ ] Enhance automation based on motion and temperature
-- [ ] Expand Grafana dashboards
+- [ ] Implement advanced automation sequences
+- [ ] Create more sophisticated lighting scenes
+- [ ] Expand energy usage analytics
+- [ ] Enhance temperature-based controls
 
 ### Long Term
-- [ ] Implement ML-based presence detection
-- [ ] Add energy usage optimization
-- [ ] Integrate weather-based controls
-- [ ] Develop mobile app interface
+- [ ] Add more environmental sensors
+- [ ] Implement presence-based automation
+- [ ] Expand security features
+- [ ] Develop custom Grafana dashboards
 
 *Building a smarter home, one device at a time!* 🏠✨
