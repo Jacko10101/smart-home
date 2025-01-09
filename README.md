@@ -1,115 +1,94 @@
-# Smart Home on K3s
+# My Smart Home Setup
 
-A production-ready, fully local home automation system built on Kubernetes (K3s). This project demonstrates how to create a modern, secure, and scalable smart home infrastructure using GitOps principles, Tailscale VPN, and comprehensive monitoring - all while keeping your data private and under your control.
+A self-hosted home automation system running on Kubernetes. Built with privacy and local control in mind - no cloud services required.
 
-## 🌟 Overview
+## Overview
 
-Transform your home into a smart living space with this enterprise-grade setup that prioritizes:
-- Local-first architecture (no cloud dependencies)
-- Security and privacy through Tailscale VPN
-- GitOps-driven deployments with ArgoCD
-- Comprehensive monitoring and alerting
-- Scalable Kubernetes (K3s) foundation
+This is my personal smart home setup that runs entirely on a Raspberry Pi 5 using K3s Kubernetes. It features:
 
-## 🏗 Infrastructure
+- Fully local architecture (no cloud dependencies)
+- Remote access through Tailscale VPN 
+- GitOps deployments with ArgoCD
+- Rich monitoring and power usage tracking
+- Scalable foundation for future expansion
 
-### Hardware Setup
-- **Core System**: Raspberry Pi 5 (8GB RAM)
-- **Storage**: 1TB NVMe SSD for high-performance data access
-- **Power**: CyberPower CP900EPFCLCD UPS for continuous operation
-- **Network**: Wired CAT8 Ethernet for reliable connectivity
-- **Zigbee**: SONOFF Zigbee 3.0 USB Dongle Plus (coordinator)
+## Current Setup
+
+### Core Hardware
+- Raspberry Pi 5 (8GB) running K3s
+- 1TB NVMe SSD
+- UPS backup power
+- SONOFF Zigbee USB coordinator
+- Wired ethernet connection
 
 ### Smart Devices
-Currently integrated devices:
 
-| Location | Device | Type | Purpose |
-|----------|--------|------|---------|
-| Living Room | SONOFF SNZB-02D | Temperature/Humidity LCD | Environmental monitoring |
-| Hallway | SONOFF SNZB-02D | Temperature/Humidity LCD | Environmental monitoring |
-| Bedroom | SONOFF SNZB-03 | Motion Sensor | Presence detection |
-| Bedroom | SONOFF SNZB-04 | Contact Sensor | Window monitoring |
-| Bedroom | 6x Philips Hue | Color E14 Bulbs | Ambient lighting |
-| Hallway | Innr SP 242 | Smart Plug | Lamp control + energy monitoring |
-| Kitchen | Innr SP 242 | Smart Plug | Heater control + energy monitoring |
-| Dining Room | Innr SP 242 | Smart Plug | TV control + energy monitoring |
-| Outdoor | Reolink | Security Camera | Surveillance with solar panel |
+My current device setup spans several rooms:
 
-## 🎨 Lighting Scenes
+#### Bedroom
+- 6x Philips Hue Color E14 bulbs for adaptive lighting
+- SONOFF motion sensor for occupancy detection
+- SONOFF contact sensor on window
+- Custom scenes for different activities:
+ - Wake Up: Gentle morning brightness increase
+ - Gaming: Immersive RGB lighting
+ - Movie Mode: Subtle ambient lighting
+ - Evening Relax: Warm wind-down lighting
+ - Night Reading: Focused task lighting
+ - Party Mode: Dynamic RGB effects
 
-The bedroom features sophisticated lighting control with predefined scenes:
-- **Wake Up**: Gradual 20-minute brightness increase with warm light
-- **Daylight**: Bright, cool lighting for productivity
-- **Gaming**: Immersive RGB lighting with blue/red contrast
-- **Movie**: Minimal ambient lighting for viewing
-- **Evening Relax**: Warm, dimmed lighting for winding down
-- **Night Reading**: Focused reading light with ambient background
-- **Party**: Full RGB color mix for entertainment
+#### Environmental Monitoring
+- SONOFF LCD temp/humidity sensor in living room
+- SONOFF LCD temp/humidity sensor in hallway
+- Real-time tracking through Grafana dashboards
 
-## 🚀 Core Components
+#### Power Monitoring
+- Innr smart plugs with energy tracking:
+ - Hallway lamp
+ - Kitchen heater 
+ - Dining room TV
+- Power usage visualization and trending
 
-### 1. ArgoCD (GitOps Engine)
-- Automatically syncs your Git repository with the cluster
-- Manages all application deployments
-- Accessible via Tailscale
+#### Security
+- Reolink outdoor camera with solar power
+- Motion and contact sensor alerts
+- Secure remote access via Tailscale VPN
 
-### 2. Home Assistant
-- Central automation hub
+## Software Stack
+
+### Core Services
+- **Home Assistant**: Central control and automation
+- **Zigbee2MQTT**: Device management 
+- **Mosquitto**: MQTT message broker
+- **ArgoCD**: GitOps deployment
+- **Prometheus & Grafana**: Monitoring and visualization
+
+### Key Features
+- Temperature and humidity tracking
+- Power consumption monitoring
 - Custom lighting scenes
-- Power monitoring and energy tracking
-- Temperature/humidity monitoring
-- Accessible via Tailscale
+- Motion-based automations
+- Secure remote access
 
-### 3. Zigbee2mqtt
-- Manages all Zigbee devices (lights, sensors, plugs)
-- Web interface for device management
-- Direct MQTT integration with Home Assistant
-- Accessible via Tailscale
+## Monitoring & Analytics
 
-### 4. Mosquitto (MQTT Broker)
-- Message broker for device communication
-- Enables reliable IoT device messaging
-- Configured for local-only access
-
-### 5. Monitoring Stack
-- **Prometheus & Grafana**:
-  - Environmental data visualization
-  - Power usage monitoring
-  - Device status tracking
-  - Temperature trends
-  - Light usage patterns
-
-## 📊 Current Monitoring
-
-- Real-time power consumption for smart plugs
-- Temperature and humidity trends
-- Motion detection events
-- Window state monitoring
-- Light usage patterns
-- Device battery levels
+Current monitoring includes:
+- Real-time power usage per device
+- Environmental data trends
+- Motion events and occupancy
+- Light status and usage patterns
 - System performance metrics
 
-## 🔒 Security Features
+## Upcoming Projects
 
-- All services accessible only through Tailscale VPN
-- No ports exposed to the internet
-- Regular automatic updates via GitOps
-- UPS protection against power failures
-- Local-only data storage
-- Encrypted remote access
+### Near Term
+- Installing smart TRV radiator valves for room-by-room heating control
+- Expanding security setup with more cameras and sensors
+- Setting up presence detection
+- Creating more advanced automations
 
-## 🎯 Future Plans
-
-### Short Term
-- [ ] Implement advanced automation sequences
-- [ ] Create more sophisticated lighting scenes
-- [ ] Expand energy usage analytics
-- [ ] Enhance temperature-based controls
-
-### Long Term
-- [ ] Add more environmental sensors
-- [ ] Implement presence-based automation
-- [ ] Expand security features
-- [ ] Develop custom Grafana dashboards
-
-*Building a smarter home, one device at a time!* 🏠✨
+### Future Plans  
+- Extending coverage to more rooms
+- Adding energy optimisation features
+- Improving monitoring dashboards
+- Integrating additional sensor types
