@@ -5,7 +5,6 @@ metadata:
   namespace: home-assistant
 data:
   configuration.yaml: |
-    # Your existing configuration.yaml content
     # Core Configuration
     default_config:
 
@@ -43,32 +42,135 @@ data:
       entities:
         light.bedroom_group:
           state: 'on'
+          brightness: 1  # Start very dim
+          color_temp: 500  # Very warm
+          transition: 1200  # 20 minute fade
+        switch.hallway_lamp:
+          state: 'on'
+
+    - name: "Daylight"
+      entities:
+        light.bedroom_group:
+          state: 'on'
           brightness: 255
-          color_temp: 250
-          transition: 1200
-    - name: "Gaming"
+          color_temp: 250  # Bright daylight
+          transition: 5
+
+    - name: "Gaming Mode"
       entities:
         light.bedroom_left_1:
           state: 'on'
-          brightness: 128
-          rgb_color: [0, 0, 255]
+          brightness: 200
+          rgb_color: [0, 0, 255]  # Deep blue
         light.bedroom_left_2:
           state: 'on'
-          brightness: 128
+          brightness: 200
           rgb_color: [0, 0, 255]
         light.bedroom_right_1:
           state: 'on'
-          brightness: 128
-          rgb_color: [0, 0, 255]
+          brightness: 200
+          rgb_color: [255, 0, 0]  # Deep red
         light.bedroom_right_2:
           state: 'on'
-          brightness: 128
-          rgb_color: [0, 0, 255]
+          brightness: 200
+          rgb_color: [255, 0, 0]
+        light.bedroom_middle_1:
+          state: 'on'
+          brightness: 50
+          rgb_color: [148, 0, 211]  # Purple
+        light.bedroom_middle_2:
+          state: 'on'
+          brightness: 50
+          rgb_color: [148, 0, 211]
+
+    - name: "Movie Mode"
+      entities:
+        light.bedroom_left_1:
+          state: 'on'
+          brightness: 30
+          rgb_color: [255, 69, 0]  # Red-orange
+        light.bedroom_left_2:
+          state: 'on'
+          brightness: 30
+          rgb_color: [255, 69, 0]
+        light.bedroom_right_1:
+          state: 'on'
+          brightness: 30
+          rgb_color: [255, 69, 0]
+        light.bedroom_right_2:
+          state: 'on'
+          brightness: 30
+          rgb_color: [255, 69, 0]
         light.bedroom_middle_1:
           state: 'off'
         light.bedroom_middle_2:
           state: 'off'
-    # ... other scenes
+        switch.hallway_lamp:
+          state: 'off'
+
+    - name: "Evening Relax"
+      entities:
+        light.bedroom_group:
+          state: 'on'
+          brightness: 128
+          color_temp: 500  # Very warm
+          transition: 5
+        switch.hallway_lamp:
+          state: 'on'
+
+    - name: "Night Reading"
+      entities:
+        light.bedroom_middle_1:
+          state: 'on'
+          brightness: 150
+          color_temp: 400  # Warm but good for reading
+        light.bedroom_middle_2:
+          state: 'on'
+          brightness: 150
+          color_temp: 400
+        light.bedroom_left_1:
+          state: 'on'
+          brightness: 50
+          color_temp: 500
+        light.bedroom_left_2:
+          state: 'on'
+          brightness: 50
+          color_temp: 500
+        light.bedroom_right_1:
+          state: 'on'
+          brightness: 50
+          color_temp: 500
+        light.bedroom_right_2:
+          state: 'on'
+          brightness: 50
+          color_temp: 500
+
+    - name: "Party Mode"
+      entities:
+        light.bedroom_left_1:
+          state: 'on'
+          brightness: 255
+          rgb_color: [255, 0, 0]  # Red
+        light.bedroom_left_2:
+          state: 'on'
+          brightness: 255
+          rgb_color: [0, 255, 0]  # Green
+        light.bedroom_middle_1:
+          state: 'on'
+          brightness: 255
+          rgb_color: [0, 0, 255]  # Blue
+        light.bedroom_middle_2:
+          state: 'on'
+          brightness: 255
+          rgb_color: [255, 255, 0]  # Yellow
+        light.bedroom_right_1:
+          state: 'on'
+          brightness: 255
+          rgb_color: [255, 0, 255]  # Purple
+        light.bedroom_right_2:
+          state: 'on'
+          brightness: 255
+          rgb_color: [0, 255, 255]  # Cyan
 
   automations.yaml: |
     - alias: "Workday Wake Up"
@@ -87,3 +189,17 @@ data:
         - service: scene.turn_on
           target:
             entity_id: scene.wake_up
+        - delay: "00:20:00"
+        - service: scene.turn_on
+          target:
+            entity_id: scene.daylight
+
+    - alias: "Evening Wind Down"
+      trigger:
+        platform: sun
+        event: sunset
+        offset: "+00:30:00"
+      action:
+        - service: scene.turn_on
+          target:
+            entity_id: scene.evening_relax
