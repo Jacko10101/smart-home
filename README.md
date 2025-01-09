@@ -1,94 +1,120 @@
-# My Smart Home Setup
+# 🏠 Smart Home on K3s
 
-A self-hosted home automation system running on Kubernetes. Built with privacy and local control in mind - no cloud services required.
+A powerful home automation system running on Kubernetes, built with privacy and local control at its heart. All your smart home needs running on a Raspberry Pi - no cloud required!
 
-## Overview
+## ✨ What's This All About?
 
-This is my personal smart home setup that runs entirely on a Raspberry Pi 5 using K3s Kubernetes. It features:
+I've built a modern smart home system that:
+- Runs 100% locally (no cloud dependencies)
+- Keeps your data private and secure
+- Uses enterprise-grade tech (Kubernetes) in a home setting
+- Provides fancy features like adaptive lighting and power monitoring
+- Scales beautifully as you add more devices
 
-- Fully local architecture (no cloud dependencies)
-- Remote access through Tailscale VPN 
-- GitOps deployments with ArgoCD
-- Rich monitoring and power usage tracking
-- Scalable foundation for future expansion
+Perfect for both tech enthusiasts looking to self-host their smart home AND anyone wanting a reliable, private home automation setup.
 
-## Current Setup
+## 🛠 Current Setup
 
-### Core Hardware
-- Raspberry Pi 5 (8GB) running K3s
-- 1TB NVMe SSD
-- UPS backup power
-- SONOFF Zigbee USB coordinator
-- Wired ethernet connection
+### The Brain
+- **Raspberry Pi 5** (8GB) running K3s Kubernetes
+- 1TB NVMe SSD for snappy performance
+- UPS backup power because reliability matters
+- Hardwired ethernet connection
+- SONOFF Zigbee USB coordinator for device control
 
-### Smart Devices
+### The Devices
 
-My current device setup spans several rooms:
-
-#### Bedroom
-- 6x Philips Hue Color E14 bulbs for adaptive lighting
-- SONOFF motion sensor for occupancy detection
-- SONOFF contact sensor on window
-- Custom scenes for different activities:
- - Wake Up: Gentle morning brightness increase
+#### Ambient Lighting
+- **Bedroom**: 6x Philips Hue Color E14 bulbs featuring:
+ - Wake Up: Gentle sunrise simulation
  - Gaming: Immersive RGB lighting
- - Movie Mode: Subtle ambient lighting
- - Evening Relax: Warm wind-down lighting
- - Night Reading: Focused task lighting
+ - Movie Mode: Perfect ambient lighting for films
+ - Evening Relax: Warm, cozy lighting
+ - Night Reading: Optimized reading light
  - Party Mode: Dynamic RGB effects
 
+#### Smart Power Management
+Innr Smart Plugs with real-time power monitoring:
+- Hallway lamp
+- Kitchen heater
+- Dining room TV
+- Full energy usage tracking and trends
+
 #### Environmental Monitoring
-- SONOFF LCD temp/humidity sensor in living room
-- SONOFF LCD temp/humidity sensor in hallway
-- Real-time tracking through Grafana dashboards
+- Living room temperature & humidity (SONOFF LCD sensor)
+- Hallway temperature & humidity (SONOFF LCD sensor)
+- Real-time environmental tracking
+- Historical trending
 
-#### Power Monitoring
-- Innr smart plugs with energy tracking:
- - Hallway lamp
- - Kitchen heater 
- - Dining room TV
-- Power usage visualization and trending
+#### Security & Safety
+- Reolink outdoor camera (solar powered)
+- Bedroom motion detection
+- Window contact sensing
+- All accessible securely from anywhere via Tailscale VPN
 
-#### Security
-- Reolink outdoor camera with solar power
-- Motion and contact sensor alerts
-- Secure remote access via Tailscale VPN
-
-## Software Stack
+## 🚀 Technical Stack
 
 ### Core Services
-- **Home Assistant**: Central control and automation
-- **Zigbee2MQTT**: Device management 
-- **Mosquitto**: MQTT message broker
-- **ArgoCD**: GitOps deployment
-- **Prometheus & Grafana**: Monitoring and visualization
+1. **Home Assistant**
+  - Central automation hub
+  - Custom scenes and routines
+  - Device management
+  - Accessible via `http://<tailscale-ip>:31123`
 
-### Key Features
-- Temperature and humidity tracking
-- Power consumption monitoring
-- Custom lighting scenes
-- Motion-based automations
-- Secure remote access
+2. **Zigbee2MQTT**
+  - Manages all Zigbee devices
+  - Direct MQTT integration
+  - Accessible via `http://<tailscale-ip>:31678`
 
-## Monitoring & Analytics
+3. **ArgoCD**
+  - GitOps deployment
+  - Infrastructure as code
+  - Accessible via `http://<tailscale-ip>:30113`
 
-Current monitoring includes:
-- Real-time power usage per device
-- Environmental data trends
+4. **Monitoring Stack**
+  - Prometheus metrics collection
+  - Grafana dashboards
+  - Power usage visualization
+  - Environmental data tracking
+  - Accessible via `http://<tailscale-ip>:31295`
+
+### For the Techies
+All services run as Kubernetes deployments managed by ArgoCD, with:
+- Persistent volume claims for data storage
+- ConfigMap-based configuration
+- NodePort service exposure
+- Tailscale VPN integration
+- MQTT messaging backbone
+
+## 📊 Current Monitoring
+
+Real-time tracking of:
+- Power consumption per device
+- Temperature and humidity trends
 - Motion events and occupancy
-- Light status and usage patterns
-- System performance metrics
+- Light usage patterns
+- System performance
+- Device battery levels
 
-## Upcoming Projects
+## 🔒 Security First
 
-### Near Term
-- Installing smart TRV radiator valves for room-by-room heating control
-- Expanding security setup with more cameras and sensors
-- Setting up presence detection
-- Creating more advanced automations
+- Zero ports exposed to the internet
+- Tailscale VPN for secure remote access
+- Regular automated updates via GitOps
+- UPS protection against power outages
+- Local data storage
+- Encrypted communications
 
-### Future Plans  
-- Extending coverage to more rooms
-- Adding energy optimisation features
-- Improving monitoring dashboards
-- Integrating additional sensor types
+## 🎯 What's Next?
+
+### Active Projects
+- Smart TRV radiator installation for room-by-room heating
+- Enhanced security system with more cameras and sensors
+- Presence detection improvements
+- Advanced automation sequences
+
+### Future Vision
+- Whole house coverage
+- Energy optimisation
+- Advanced monitoring dashboards
+- Machine learning integration
