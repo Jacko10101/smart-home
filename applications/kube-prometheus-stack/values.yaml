@@ -9,6 +9,34 @@ alertmanager:
   config:
     global:
       resolve_timeout: 5m
+    route:
+      group_by: ['alertname', 'namespace']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 4h
+      receiver: 'null'
+      routes:
+        - match:
+            severity: critical
+          receiver: 'null'
+          repeat_interval: 1h
+        - match:
+            severity: warning
+          receiver: 'null'
+          repeat_interval: 4h
+    receivers:
+      - name: 'null'
+      # Email config - enable when you have 2FA + app password:
+      # - name: 'email'
+      #   email_configs:
+      #     - to: 'devlinjack123@hotmail.com'
+      #       smarthost: 'smtp-mail.outlook.com:587'
+      #       from: 'devlinjack123@hotmail.com'
+      #       auth_username: 'devlinjack123@hotmail.com'
+      #       auth_password: 'YOUR_APP_PASSWORD'
+      #       require_tls: true
+      #       send_resolved: true
+    templates: []
   alertmanagerSpec:
     service:
       type: NodePort

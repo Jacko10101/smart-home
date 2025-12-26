@@ -1,0 +1,116 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: smart-home-alerts
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  groups:
+    - name: smart-home-services
+      rules:
+        # Home Assistant down
+        - alert: HomeAssistantDown
+          expr: up{job="home-assistant"} == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Home Assistant is down"
+            description: "Home Assistant has been unreachable for more than 2 minutes."
+
+        # Zigbee2MQTT down (check via service endpoint)
+        - alert: Zigbee2MQTTDown
+          expr: kube_deployment_status_replicas_available{deployment="zigbee2mqtt", namespace="zigbee"} == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Zigbee2MQTT is down"
+            description: "Zigbee2MQTT has no available replicas for more than 2 minutes."
+
+        # Mosquitto MQTT down
+        - alert: MosquittoDown
+          expr: kube_deployment_status_replicas_available{deployment="mosquitto", namespace="mosquitto"} == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Mosquitto MQTT broker is down"
+            description: "Mosquitto has no available replicas for more than 2 minutes."
+
+    - name: smart-home-resources
+      rules:
+        # High CPU usage on node
+        - alert: HighNodeCPU
+          expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High CPU usage on {{ $labels.instance }}"
+            description: "CPU usage is above 80% for more than 5 minutes (current: {{ $value | printf \"%.1f\" }}%)."
+
+        # High memory usage on node
+        - alert: HighNodeMemory
+          expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High memory usage on {{ $labels.instance }}"
+            description: "Memory usage is above 85% for more than 5 minutes (current: {{ $value | printf \"%.1f\" }}%)."
+
+        # Disk space low
+        - alert: LowDiskSpace
+          expr: (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"})) * 100 > 80
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Low disk space on {{ $labels.instance }}"
+            description: "Disk usage on {{ $labels.mountpoint }} is above 80% (current: {{ $value | printf \"%.1f\" }}%)."
+
+        # Disk space critical
+        - alert: CriticalDiskSpace
+          expr: (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"})) * 100 > 90
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Critical disk space on {{ $labels.instance }}"
+            description: "Disk usage on {{ $labels.mountpoint }} is above 90% (current: {{ $value | printf \"%.1f\" }}%)."
+
+    - name: smart-home-pods
+      rules:
+        # Pod restart loop
+        - alert: PodRestartLoop
+          expr: increase(kube_pod_container_status_restarts_total[1h]) > 3
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Pod {{ $labels.pod }} is restarting frequently"
+            description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} has restarted {{ $value | printf \"%.0f\" }} times in the last hour."
+
+        # Pod not ready
+        - alert: PodNotReady
+          expr: kube_pod_status_ready{condition="true"} == 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Pod {{ $labels.pod }} is not ready"
+            description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} has been not ready for more than 5 minutes."
+
+    - name: backup-alerts
+      rules:
+        # Backup job failed
+        - alert: BackupJobFailed
+          expr: kube_job_status_failed{namespace="backup"} > 0
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Backup job failed"
+            description: "The smart-home backup job has failed. Check the job logs for details."

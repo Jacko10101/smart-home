@@ -1,0 +1,110 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: backup
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: backup-storage
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /backups
+    type: DirectoryOrCreate
+  storageClassName: local-storage
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backup-storage
+  namespace: backup
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: local-storage
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: smart-home-backup
+  namespace: backup
+spec:
+  # Run daily at 3am
+  schedule: "0 3 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: backup
+              image: busybox:1.37
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+                  TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+                  BACKUP_DIR=/backups/$TIMESTAMP
+
+                  echo "Starting backup at $TIMESTAMP"
+                  mkdir -p $BACKUP_DIR
+
+                  # Backup Home Assistant config
+                  echo "Backing up Home Assistant..."
+                  cp -r /home-assistant-config $BACKUP_DIR/home-assistant
+
+                  # Backup Zigbee2MQTT data
+                  echo "Backing up Zigbee2MQTT..."
+                  cp -r /zigbee2mqtt-data $BACKUP_DIR/zigbee2mqtt
+
+                  # Create tarball
+                  echo "Creating archive..."
+                  cd /backups
+                  tar -czf $TIMESTAMP.tar.gz $TIMESTAMP
+                  rm -rf $TIMESTAMP
+
+                  # Keep only last 7 backups
+                  echo "Cleaning old backups..."
+                  ls -t /backups/*.tar.gz | tail -n +8 | xargs -r rm
+
+                  echo "Backup completed: $TIMESTAMP.tar.gz"
+                  ls -lh /backups/*.tar.gz
+              volumeMounts:
+                - name: backup-storage
+                  mountPath: /backups
+                - name: home-assistant-config
+                  mountPath: /home-assistant-config
+                  readOnly: true
+                - name: zigbee2mqtt-data
+                  mountPath: /zigbee2mqtt-data
+                  readOnly: true
+              resources:
+                limits:
+                  cpu: "500m"
+                  memory: "256Mi"
+                requests:
+                  cpu: "100m"
+                  memory: "64Mi"
+          volumes:
+            - name: backup-storage
+              persistentVolumeClaim:
+                claimName: backup-storage
+            - name: home-assistant-config
+              hostPath:
+                path: /home-assistant-config
+                type: Directory
+            - name: zigbee2mqtt-data
+              hostPath:
+                path: /zigbee2mqtt-data
+                type: Directory

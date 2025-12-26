@@ -26,7 +26,7 @@ data:
     advanced:
       pan_id: 6754
       channel: 11
-      network_key: [1, 3, 5, 7, 9, 11, 13, 15, 0, 2, 4, 6, 8, 10, 12, 13]
+      # network_key is set via ZIGBEE2MQTT_CONFIG_ADVANCED_NETWORK_KEY env var
       adapter_concurrent: 16
       adapter_delay: 100
       transmit_power: 20

@@ -1,0 +1,19 @@
+# Secrets - NEVER commit these
+**/secrets.yaml
+**/secret.yaml
+**/*-secret.yaml
+**/*-secrets.yaml
+
+# Local development
+.env
+*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

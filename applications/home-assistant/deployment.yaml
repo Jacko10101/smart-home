@@ -5,6 +5,8 @@ metadata:
   namespace: home-assistant
 spec:
   replicas: 1
+  strategy:
+    type: Recreate  # Required - HA locks the config directory
   selector:
     matchLabels:
       app: home-assistant
@@ -15,7 +17,7 @@ spec:
     spec:
       containers:
         - name: home-assistant
-          image: ghcr.io/home-assistant/home-assistant:stable
+          image: ghcr.io/home-assistant/home-assistant:2025.12.4
           ports:
             - containerPort: 8123
               name: http
@@ -34,6 +36,27 @@ spec:
             - name: ha-config
               mountPath: /config/automations.yaml
               subPath: automations.yaml
+          livenessProbe:
+            tcpSocket:
+              port: 8123
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 8123
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          startupProbe:
+            tcpSocket:
+              port: 8123
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
           resources:
             limits:
               cpu: "1"

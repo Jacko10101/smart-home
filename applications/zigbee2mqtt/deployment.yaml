@@ -5,6 +5,8 @@ metadata:
   namespace: zigbee
 spec:
   replicas: 1
+  strategy:
+    type: Recreate  # Required for USB device access - only one pod can use the device
   selector:
     matchLabels:
       app: zigbee2mqtt
@@ -15,7 +17,7 @@ spec:
     spec:
       initContainers:
         - name: init-data-dir
-          image: busybox
+          image: busybox:1.37
           command: ['sh', '-c', 'cp /config/configuration.yaml /data/ && chmod 777 /data/configuration.yaml']
           volumeMounts:
             - name: config
@@ -23,7 +25,7 @@ spec:
             - name: data
               mountPath: /data
         - name: fix-usb-permissions
-          image: busybox
+          image: busybox:1.37
           command: ['sh', '-c', 'chown root:18 /dev_host/ttyUSB0 && chmod 660 /dev_host/ttyUSB0 && chown -R 1000:1000 /data']
           securityContext:
             privileged: true
@@ -34,7 +36,7 @@ spec:
               mountPath: /data
       containers:
         - name: zigbee2mqtt
-          image: koenkk/zigbee2mqtt:latest-dev
+          image: koenkk/zigbee2mqtt:2.7.1
           ports:
             - containerPort: 8080
           resources:
@@ -58,6 +60,27 @@ spec:
               value: "Europe/London"
             - name: ZIGBEE2MQTT_CONFIG_SERIAL_DISABLE_LED
               value: "false"
+            - name: ZIGBEE2MQTT_CONFIG_ADVANCED_NETWORK_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: zigbee2mqtt-secrets
+                  key: network_key
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
       volumes:
         - name: usb
           hostPath:
