@@ -13,7 +13,7 @@ data:
       port: /dev/ttyUSB0
       adapter: zstack
     frontend: true
-    permit_join: true
+    permit_join: false  # Enable temporarily via UI when adding new devices
     
     # Home Assistant integration settings
     homeassistant:
@@ -30,30 +30,30 @@ data:
       adapter_concurrent: 16
       adapter_delay: 100
       transmit_power: 20
-      log_level: debug  # Added for troubleshooting
+      log_level: info
 
     devices:
       '0x001788010d5bade1':
-        friendly_name: 'bedroom_middle_1'
+        friendly_name: 'living_room_middle_1'
         description: 'Hue White and Color Ambiance E14'
       '0x001788010d8f4a8b':
-        friendly_name: 'bedroom_middle_2'
+        friendly_name: 'living_room_middle_2'
         description: 'Hue White and Color Ambiance E14'
       '0x001788010d5badaa':
-        friendly_name: 'bedroom_left_1'
+        friendly_name: 'living_room_left_1'
         description: 'Hue White and Color Ambiance E14'
       '0x001788010d8f4a45':
-        friendly_name: 'bedroom_left_2'
+        friendly_name: 'living_room_left_2'
         description: 'Hue White and Color Ambiance E14'
       '0x001788010d5badcf':
-        friendly_name: 'bedroom_right_1'
+        friendly_name: 'living_room_right_1'
         description: 'Hue White and Color Ambiance E14'
       '0x001788010d5badd3':
-        friendly_name: 'bedroom_right_2'
+        friendly_name: 'living_room_right_2'
         description: 'Hue White and Color Ambiance E14'
-      
+
       '0x08ddebfffeee63e6':
-        friendly_name: 'bedroom_sensor'
+        friendly_name: 'living_room_sensor'
         description: 'SONOFF SNZB-02D Temperature & Humidity LCD Sensor'
         temperature_display_unit: celsius
       '0x8c65a3fffee9acd4':
@@ -61,12 +61,8 @@ data:
         description: 'SONOFF SNZB-02D Temperature & Humidity LCD Sensor'
         temperature_display_unit: celsius
       '0x00124b002fcccadd':
-        friendly_name: 'bedroom_motion'
+        friendly_name: 'living_room_motion'
         description: 'SONOFF SNZB-03 Motion Sensor'
-      '0x00124b002fa64513':
-        friendly_name: 'bedroom_window'
-        description: 'SONOFF SNZB-04 Contact Sensor'
-
       '0xa4c138482ee543a2':
         friendly_name: 'hallway_lamp'
         description: 'Innr SP 242 Smart Plug with energy monitoring'

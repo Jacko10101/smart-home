@@ -36,6 +36,9 @@ spec:
             - name: ha-config
               mountPath: /config/automations.yaml
               subPath: automations.yaml
+            - name: ha-config
+              mountPath: /config/ui-lovelace.yaml
+              subPath: ui-lovelace.yaml
           livenessProbe:
             tcpSocket:
               port: 8123
