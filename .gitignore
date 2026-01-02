@@ -1,3 +1,6 @@
+# Claude context file (contains credentials)
+CLAUDE.md
+
 # Secrets - NEVER commit these
 **/secrets.yaml
 **/secret.yaml
