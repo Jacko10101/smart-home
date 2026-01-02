@@ -18,7 +18,7 @@ spec:
           enabled: false
           patch:
             enabled: false
-        
+
         grafana:
           enabled: true
           service:
@@ -26,6 +26,21 @@ spec:
             nodePort: 31300
             annotations:
               tailscale.com/expose: "true"
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: 300m
+            requests:
+              memory: 200Mi
+              cpu: 50m
+          sidecar:
+            resources:
+              limits:
+                memory: 128Mi
+                cpu: 100m
+              requests:
+                memory: 64Mi
+                cpu: 10m
 
         prometheus:
           service:
@@ -35,8 +50,15 @@ spec:
               tailscale.com/expose: "true"
           prometheusSpec:
             routePrefix: /
-          prometheusSpec:
-            routePrefix: /
+            retention: 14d
+            retentionSize: 8GB
+            resources:
+              limits:
+                memory: 1536Mi
+                cpu: 500m
+              requests:
+                memory: 768Mi
+                cpu: 100m
             serviceMonitorSelector: {}
             additionalScrapeConfigs:
               - job_name: 'home-assistant'
@@ -53,9 +75,44 @@ spec:
             nodePort: 30723
             annotations:
               tailscale.com/expose: "true"
-        
+          alertmanagerSpec:
+            resources:
+              limits:
+                memory: 128Mi
+                cpu: 100m
+              requests:
+                memory: 64Mi
+                cpu: 20m
+
+        prometheusOperator:
+          resources:
+            limits:
+              memory: 256Mi
+              cpu: 200m
+            requests:
+              memory: 100Mi
+              cpu: 20m
+
         kubeStateMetrics:
           enabled: true
+
+        kube-state-metrics:
+          resources:
+            limits:
+              memory: 128Mi
+              cpu: 100m
+            requests:
+              memory: 64Mi
+              cpu: 20m
+
+        prometheus-node-exporter:
+          resources:
+            limits:
+              memory: 64Mi
+              cpu: 100m
+            requests:
+              memory: 32Mi
+              cpu: 20m
   
   destination:
     server: 'https://kubernetes.default.svc'
