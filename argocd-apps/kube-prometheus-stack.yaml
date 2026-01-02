@@ -14,10 +14,6 @@ spec:
     helm:
       values: |
         fullnameOverride: "prometheus"
-        admissionWebhooks:
-          enabled: false
-          patch:
-            enabled: false
 
         grafana:
           enabled: true
@@ -85,6 +81,10 @@ spec:
                 cpu: 20m
 
         prometheusOperator:
+          admissionWebhooks:
+            enabled: false
+            patch:
+              enabled: false
           resources:
             limits:
               memory: 256Mi
