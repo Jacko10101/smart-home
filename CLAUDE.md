@@ -60,6 +60,20 @@ The goal is a **resilient, smart, useful, elegant, fully-local** smart home. Eve
 4. **Grafana admin password is the default** (`prom-operator`). Task #14.
 5. **systemd watchdog is on** (`RuntimeWatchdogSec=30s` via `/etc/systemd/system.conf.d/watchdog.conf`) — hard hangs now auto-reboot within 30 seconds. Big win, recently enabled.
 
+## Roadmap (things Jack wants to do)
+
+Direction, not commitments. Don't push toward these until foundations work above is done — Jack is explicit about not scaling devices on shaky infra.
+
+- **Off-pi backups.** Highest priority foundation item left. Current direction: a LAN-resident target (second device, NAS, or a second Pi) plus a USB SSD rotated physically offsite. No cloud target (violates North Star). Hardware decision ~2 weeks out.
+- **Ethernet via powerline adapters.** Eliminate the brcmfmac WiFi-driver hypothesis for the Jan–Mar 2026 hangs. Watchdog mitigates but doesn't fix root cause.
+- **Security cameras (×4).** Reolink → Frigate via Coral USB accelerator. Will be a new ArgoCD app; needs to evaluate memory headroom on the Pi and storage planning for recordings.
+- **Whole-house lighting.** Open to the wall-switch + dumb-bulb pattern (keep physical control + zigbee dimmer behind it). Currently only living room is wired.
+- **Smart TRV in one room first.** Boiler thermostat is upstream and out of scope. Heating is high-stakes — physical fallback (manual TRV behaviour when system is down) is a hard requirement.
+- **Presence/motion/temp sensors throughout.** mmWave (Aqara FP2 etc.) preferred over PIR for presence accuracy.
+- **Window contact sensors.** None paired yet.
+- **HA recorder → MariaDB/Postgres.** Defer until close to ~30 entities. Currently sqlite ~11MB, fine.
+- **Remote access.** No fixed answer yet. Tailscale was tried and removed; revisit when there's a real use case.
+
 ## Common operational commands
 
 ```bash
