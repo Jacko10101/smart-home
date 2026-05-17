@@ -32,9 +32,9 @@ spec:
             limits:
               cpu: 100m
               memory: 64Mi
+          # No /healthz endpoint in v1.2.1 — use TCP probe instead
           livenessProbe:
-            httpGet:
-              path: /healthz
+            tcpSocket:
               port: 8000
             initialDelaySeconds: 10
             periodSeconds: 30
