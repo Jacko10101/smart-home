@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-self
+  namespace: argocd
+  annotations:
+    # ArgoCD self-manages from upstream. Bumping targetRevision = upgrading ArgoCD.
+    # Renovate will auto-PR new versions.
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/argoproj/argo-cd.git'
+    path: manifests
+    targetRevision: v3.4.2
+    directory:
+      include: 'install.yaml'
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: argocd
+  syncPolicy:
+    automated:
+      # DO NOT prune — accidentally removing a manifest must not let ArgoCD delete itself.
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+      - ApplyOutOfSyncOnly=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 5m
