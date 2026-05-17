@@ -18,6 +18,26 @@ spec:
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: argocd
+  # Pi 5 can't run v3 application-controller in 512Mi (OOMs continuously).
+  # Ignore the resources field on the SS so our manual patch (1Gi) survives
+  # ArgoCD reconciliation. Long-term: vendor install.yaml into a kustomization
+  # and patch upstream there instead.
+  ignoreDifferences:
+    - group: apps
+      kind: StatefulSet
+      name: argocd-application-controller
+      jsonPointers:
+        - /spec/template/spec/containers/0/resources
+    - group: apps
+      kind: Deployment
+      name: argocd-repo-server
+      jsonPointers:
+        - /spec/template/spec/containers/0/resources
+    - group: apps
+      kind: Deployment
+      name: argocd-server
+      jsonPointers:
+        - /spec/template/spec/containers/0/resources
   syncPolicy:
     automated:
       # DO NOT prune — accidentally removing a manifest must not let ArgoCD delete itself.
