@@ -71,7 +71,49 @@ spec:
             nodePort: 30723
             annotations:
               tailscale.com/expose: "true"
+          config:
+            global:
+              resolve_timeout: 5m
+              smtp_smarthost: 'smtp-mail.outlook.com:587'
+              smtp_from: 'devlinjack123@hotmail.com'
+              smtp_auth_username: 'devlinjack123@hotmail.com'
+              smtp_auth_password_file: '/etc/alertmanager/secrets/alertmanager-smtp/password'
+              smtp_require_tls: true
+            route:
+              group_by: ['alertname', 'namespace']
+              group_wait: 30s
+              group_interval: 5m
+              repeat_interval: 4h
+              receiver: 'email-warnings'
+              routes:
+                - match:
+                    alertname: Watchdog
+                  receiver: 'null'
+                - match:
+                    severity: critical
+                  receiver: 'email-critical'
+                  repeat_interval: 1h
+                - match:
+                    severity: warning
+                  receiver: 'email-warnings'
+                  repeat_interval: 4h
+            receivers:
+              - name: 'null'
+              - name: 'email-critical'
+                email_configs:
+                  - to: 'devlinjack123@hotmail.com'
+                    send_resolved: true
+                    headers:
+                      Subject: '[CRITICAL] Smart Home: {{ .GroupLabels.alertname }}'
+              - name: 'email-warnings'
+                email_configs:
+                  - to: 'devlinjack123@hotmail.com'
+                    send_resolved: true
+                    headers:
+                      Subject: '[warn] Smart Home: {{ .GroupLabels.alertname }}'
           alertmanagerSpec:
+            secrets:
+              - alertmanager-smtp
             resources:
               limits:
                 memory: 128Mi

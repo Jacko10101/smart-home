@@ -114,3 +114,30 @@ spec:
           annotations:
             summary: "Backup job failed"
             description: "The smart-home backup job has failed. Check the job logs for details."
+
+        # No successful backup in 36 hours — catches silent backup failure
+        # (e.g. Mar 12 → May 15 2026: pi was down, backups silently didn't run)
+        - alert: BackupHasntRunRecently
+          expr: time() - max(kube_cronjob_status_last_successful_time{cronjob="smart-home-backup"}) > 60*60*36
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "No successful backup in over 36 hours"
+            description: "Last successful backup was more than 36h ago. Daily backup CronJob may be failing silently."
+
+    - name: smart-home-silent-failures
+      rules:
+        # Pi rebooted (or watchdog fired) — would have caught the March 12 → May 15 outage IF an alert was wired up
+        - alert: PiRebooted
+          expr: time() - node_boot_time_seconds < 600
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Pi rebooted within the last 10 minutes"
+            description: "Pi boot time was less than 10 minutes ago. If unplanned, investigate via `journalctl -b -1`."
+        # TODO: silent z2m failure alert. Needs a usable metric — either a mosquitto exporter
+        # (mosquitto_messages_received_total) or HA's prometheus integration exposing
+        # binary_sensor.zigbee2mqtt_bridge_connection_state. Skipped until we confirm what's
+        # actually scrapeable.
