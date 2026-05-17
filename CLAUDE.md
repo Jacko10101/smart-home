@@ -48,7 +48,7 @@ The goal is a **resilient, smart, useful, elegant, fully-local** smart home. Eve
 
 - Single-node k3s on Pi 5 (8GB), 1TB NVMe SSD, UPS, SONOFF Zigbee 3.0 USB coordinator.
 - `local-path-provisioner` backs all PVCs at `/var/lib/rancher/k3s/storage/`.
-- Tailscale operator exposes Home Assistant (`tailscale.com/expose: "true"` on the service).
+- No remote access currently configured. Tailscale is uninstalled; LAN-only via the NodePorts above.
 - Backup CronJob (3am daily) tars HA + z2m PVC contents to `/backups` **on the same NVMe** — not off-pi. Task #2 to fix.
 - HA recorder is sqlite (`home-assistant_v2.db` ~11MB currently). Will need MariaDB/Postgres before ~50 entities (task #6).
 

@@ -3,8 +3,6 @@ kind: Service
 metadata:
   name: home-assistant
   namespace: home-assistant
-  annotations:
-    tailscale.com/expose: "true"
 spec:
   type: NodePort
   ports:

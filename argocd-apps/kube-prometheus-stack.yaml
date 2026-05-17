@@ -22,8 +22,6 @@ spec:
           service:
             type: NodePort
             nodePort: 31090
-            annotations:
-              tailscale.com/expose: "true"
           prometheusSpec:
             routePrefix: /
             # Trimmed retention: was 14d/8GB. For a smart-home cluster,
@@ -57,8 +55,6 @@ spec:
           service:
             type: NodePort
             nodePort: 30723
-            annotations:
-              tailscale.com/expose: "true"
           config:
             global:
               resolve_timeout: 5m
