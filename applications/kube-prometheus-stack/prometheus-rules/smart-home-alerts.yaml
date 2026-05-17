@@ -4,7 +4,11 @@ metadata:
   name: smart-home-alerts
   namespace: monitoring
   labels:
-    release: prometheus
+    # MUST match the Prometheus CRD's spec.ruleSelector (set by the
+    # kube-prometheus-stack chart to release=<helm release name>, which
+    # is the ArgoCD Application name "kube-prometheus-stack"). Mismatch
+    # = Prometheus silently does not load this rule.
+    release: kube-prometheus-stack
 spec:
   groups:
     - name: smart-home-services
