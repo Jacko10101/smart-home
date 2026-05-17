@@ -160,15 +160,24 @@ spec:
             description: "Z2M bridge_connection_state has been 0 for 5m — z2m is up but not talking to mosquitto. Check z2m logs and mosquitto."
 
         # Z2M is up and MQTT-connected but no zigbee messages are flowing — catches the
-        # "USB serial silently stuck" failure mode. Threshold 1h: SONOFF SNZB-02D temp
-        # sensors heartbeat at least every ~34min, so all of them stale > 1h means the
-        # whole zigbee mesh has gone quiet from HA's perspective. Uses min() so a single
-        # battery-dead sensor doesn't trigger the alert.
+        # "USB serial silently stuck" failure mode.
+        #
+        # Two anti-noise guards (both learned the hard way):
+        # 1. Threshold 90min, not 60min. SONOFF SNZB-02D default max-reporting-interval
+        #    is 30-60min on stable temperature; a 60min threshold false-positives during
+        #    stable conditions. 90min gives headroom over worst-case sensor cadence.
+        # 2. HA pod must have been up > 2h. The homeassistant_last_updated_time_seconds
+        #    metric resets to "now" when HA restarts (entities re-hydrate from storage at
+        #    boot), and for battery-conserving sensors no fresh data arrives for up to an
+        #    hour. Without this guard, every HA restart fires the alert ~80min later.
         - alert: Zigbee2MQTTNoUpdates
-          expr: min(time() - homeassistant_last_updated_time_seconds{entity=~"sensor\\.(living_room|hallway)_sensor_temperature"}) > 3600
+          expr: |
+            min(time() - homeassistant_last_updated_time_seconds{entity=~"sensor\\.(living_room|hallway)_sensor_temperature"}) > 5400
+              and on()
+            (time() - max(kube_pod_start_time{namespace="home-assistant", pod=~"home-assistant-.*"})) > 7200
           for: 10m
           labels:
             severity: critical
           annotations:
-            summary: "No zigbee sensor updates for over 1 hour"
-            description: "Every z2m heartbeat sensor is stale > 1h. Likely USB serial hung or zigbee radio stuck. Try `kubectl rollout restart deployment/zigbee2mqtt -n zigbee`."
+            summary: "No zigbee sensor updates for over 90 minutes"
+            description: "Every z2m heartbeat sensor is stale > 90min and HA has been up > 2h. Likely USB serial hung or zigbee radio stuck. Try `kubectl rollout restart deployment/zigbee2mqtt -n zigbee`."
