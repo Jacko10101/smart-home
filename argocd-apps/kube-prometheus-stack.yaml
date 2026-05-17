@@ -16,11 +16,11 @@ spec:
         fullnameOverride: "prometheus"
 
         # === Grafana toggle ===
-        # Flip `enabled` to false to free ~500MB RAM. HA's UI covers most
-        # day-to-day visibility for home automation; Grafana is mainly for
-        # k8s/Prometheus introspection.
+        # Disabled by default — HA's UI covers day-to-day visibility for home
+        # automation, Grafana is mainly for k8s/Prometheus deep-dives. Flip to
+        # true and re-sync if needed.
         grafana:
-          enabled: true
+          enabled: false
           admin:
             existingSecret: grafana-admin-creds
             userKey: admin-user
