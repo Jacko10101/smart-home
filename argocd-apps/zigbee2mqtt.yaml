@@ -12,3 +12,7 @@ spec:
     server: 'https://kubernetes.default.svc'
     namespace: zigbee
   project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

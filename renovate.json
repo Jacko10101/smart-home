@@ -1,0 +1,41 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":timezone(Europe/London)"
+  ],
+  "labels": ["dependencies"],
+  "schedule": ["after 8am and before 9am every weekday"],
+  "kubernetes": {
+    "managerFilePatterns": [
+      "/applications/.+\\.yaml$/",
+      "/argocd-apps/.+\\.yaml$/"
+    ]
+  },
+  "argocd": {
+    "managerFilePatterns": [
+      "/argocd-apps/.+\\.yaml$/"
+    ]
+  },
+  "packageRules": [
+    {
+      "description": "Group all kube-prometheus-stack and prometheus-operator updates",
+      "matchPackageNames": ["kube-prometheus-stack", "/^quay.io/prometheus/", "/^docker.io/grafana/"],
+      "groupName": "monitoring stack"
+    },
+    {
+      "description": "Don't auto-merge anything — review every update",
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "automerge": false
+    },
+    {
+      "description": "Pin k3s upgrades — they're risky, want a separate PR each time",
+      "matchPackageNames": ["k3s-io/k3s"],
+      "groupName": "k3s"
+    }
+  ],
+  "prHourlyLimit": 4,
+  "prConcurrentLimit": 10
+}
