@@ -28,18 +28,16 @@ data:
           type: module
 
     # Group Configuration
-    # Note: Entity IDs use 'bedroom_' because that's how HA originally registered them
-    # Zigbee2MQTT friendly_name changes don't affect existing HA entity IDs
     group:
       living_room_lights:
         name: Living Room Lights
         entities:
-          - light.bedroom_left_1
-          - light.bedroom_left_2
-          - light.bedroom_middle_1
-          - light.bedroom_middle_2
-          - light.bedroom_right_1
-          - light.bedroom_right_2
+          - light.living_room_left_1
+          - light.living_room_left_2
+          - light.living_room_middle_1
+          - light.living_room_middle_2
+          - light.living_room_right_1
+          - light.living_room_right_2
 
     # Include other configurations
     scene: !include scenes.yaml
@@ -146,7 +144,7 @@ data:
                 name: Temperature
                 icon_color: red
               - type: custom:mushroom-entity-card
-                entity: binary_sensor.bedroom_motion_occupancy
+                entity: binary_sensor.living_room_motion_occupancy
                 name: Motion
                 icon: mdi:motion-sensor
 
@@ -186,7 +184,7 @@ data:
               - type: custom:mushroom-title-card
                 title: Security
               - type: custom:mushroom-entity-card
-                entity: binary_sensor.bedroom_motion_occupancy
+                entity: binary_sensor.living_room_motion_occupancy
                 name: Motion
                 icon: mdi:motion-sensor
 
@@ -280,42 +278,42 @@ data:
               - type: custom:mushroom-title-card
                 title: Living Room Lights
               - type: custom:mushroom-light-card
-                entity: light.bedroom_left_1
+                entity: light.living_room_left_1
                 name: Left 1
                 use_light_color: true
                 show_brightness_control: true
                 show_color_control: true
                 collapsible_controls: true
               - type: custom:mushroom-light-card
-                entity: light.bedroom_left_2
+                entity: light.living_room_left_2
                 name: Left 2
                 use_light_color: true
                 show_brightness_control: true
                 show_color_control: true
                 collapsible_controls: true
               - type: custom:mushroom-light-card
-                entity: light.bedroom_middle_1
+                entity: light.living_room_middle_1
                 name: Middle 1
                 use_light_color: true
                 show_brightness_control: true
                 show_color_control: true
                 collapsible_controls: true
               - type: custom:mushroom-light-card
-                entity: light.bedroom_middle_2
+                entity: light.living_room_middle_2
                 name: Middle 2
                 use_light_color: true
                 show_brightness_control: true
                 show_color_control: true
                 collapsible_controls: true
               - type: custom:mushroom-light-card
-                entity: light.bedroom_right_1
+                entity: light.living_room_right_1
                 name: Right 1
                 use_light_color: true
                 show_brightness_control: true
                 show_color_control: true
                 collapsible_controls: true
               - type: custom:mushroom-light-card
-                entity: light.bedroom_right_2
+                entity: light.living_room_right_2
                 name: Right 2
                 use_light_color: true
                 show_brightness_control: true
@@ -460,52 +458,52 @@ data:
 
     - name: "Gaming Mode"
       entities:
-        light.bedroom_left_1:
+        light.living_room_left_1:
           state: 'on'
           brightness: 200
           rgb_color: [0, 0, 255]
-        light.bedroom_left_2:
+        light.living_room_left_2:
           state: 'on'
           brightness: 200
           rgb_color: [0, 0, 255]
-        light.bedroom_right_1:
+        light.living_room_right_1:
           state: 'on'
           brightness: 200
           rgb_color: [255, 0, 0]
-        light.bedroom_right_2:
+        light.living_room_right_2:
           state: 'on'
           brightness: 200
           rgb_color: [255, 0, 0]
-        light.bedroom_middle_1:
+        light.living_room_middle_1:
           state: 'on'
           brightness: 50
           rgb_color: [148, 0, 211]
-        light.bedroom_middle_2:
+        light.living_room_middle_2:
           state: 'on'
           brightness: 50
           rgb_color: [148, 0, 211]
 
     - name: "Movie Mode"
       entities:
-        light.bedroom_left_1:
+        light.living_room_left_1:
           state: 'on'
           brightness: 30
           rgb_color: [255, 69, 0]
-        light.bedroom_left_2:
+        light.living_room_left_2:
           state: 'on'
           brightness: 30
           rgb_color: [255, 69, 0]
-        light.bedroom_right_1:
+        light.living_room_right_1:
           state: 'on'
           brightness: 30
           rgb_color: [255, 69, 0]
-        light.bedroom_right_2:
+        light.living_room_right_2:
           state: 'on'
           brightness: 30
           rgb_color: [255, 69, 0]
-        light.bedroom_middle_1:
+        light.living_room_middle_1:
           state: 'off'
-        light.bedroom_middle_2:
+        light.living_room_middle_2:
           state: 'off'
         switch.hallway_lamp:
           state: 'off'
@@ -522,81 +520,81 @@ data:
 
     - name: "Night Reading"
       entities:
-        light.bedroom_middle_1:
+        light.living_room_middle_1:
           state: 'on'
           brightness: 150
           color_temp: 400
-        light.bedroom_middle_2:
+        light.living_room_middle_2:
           state: 'on'
           brightness: 150
           color_temp: 400
-        light.bedroom_left_1:
+        light.living_room_left_1:
           state: 'on'
           brightness: 50
           color_temp: 500
-        light.bedroom_left_2:
+        light.living_room_left_2:
           state: 'on'
           brightness: 50
           color_temp: 500
-        light.bedroom_right_1:
+        light.living_room_right_1:
           state: 'on'
           brightness: 50
           color_temp: 500
-        light.bedroom_right_2:
+        light.living_room_right_2:
           state: 'on'
           brightness: 50
           color_temp: 500
 
     - name: "Party Mode"
       entities:
-        light.bedroom_left_1:
+        light.living_room_left_1:
           state: 'on'
           brightness: 255
           rgb_color: [255, 0, 0]
-        light.bedroom_left_2:
+        light.living_room_left_2:
           state: 'on'
           brightness: 255
           rgb_color: [0, 255, 0]
-        light.bedroom_middle_1:
+        light.living_room_middle_1:
           state: 'on'
           brightness: 255
           rgb_color: [0, 0, 255]
-        light.bedroom_middle_2:
+        light.living_room_middle_2:
           state: 'on'
           brightness: 255
           rgb_color: [255, 255, 0]
-        light.bedroom_right_1:
+        light.living_room_right_1:
           state: 'on'
           brightness: 255
           rgb_color: [255, 0, 255]
-        light.bedroom_right_2:
+        light.living_room_right_2:
           state: 'on'
           brightness: 255
           rgb_color: [0, 255, 255]
 
     - name: "Cavs Game"
       entities:
-        light.bedroom_left_1:
+        light.living_room_left_1:
           state: 'on'
           brightness: 255
           rgb_color: [134, 0, 56]
-        light.bedroom_left_2:
+        light.living_room_left_2:
           state: 'on'
           brightness: 255
           rgb_color: [134, 0, 56]
-        light.bedroom_middle_1:
+        light.living_room_middle_1:
           state: 'on'
           brightness: 255
           rgb_color: [253, 187, 48]
-        light.bedroom_middle_2:
+        light.living_room_middle_2:
           state: 'on'
           brightness: 255
           rgb_color: [253, 187, 48]
-        light.bedroom_right_1:
+        light.living_room_right_1:
           state: 'on'
           brightness: 255
           rgb_color: [134, 0, 56]
-        light.bedroom_right_2:
+        light.living_room_right_2:
           state: 'on'
           brightness: 255
           rgb_color: [134, 0, 56]
