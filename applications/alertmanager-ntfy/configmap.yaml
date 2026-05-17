@@ -14,8 +14,14 @@ data:
       baseurl: https://ntfy.sh
       notification:
         topic: jack-smarthome-050101
+        # Priority mapping is deliberately tiered for sleep:
+        #   - critical firing: urgent (ntfy 5)  -> wakes the phone, bypasses ring-silence
+        #   - warning firing:  low    (ntfy 2)  -> silent notification, no sound/vibe
+        #   - any resolved:    low    (ntfy 2)  -> silent
+        # Warnings show up in the notification tray for morning review but
+        # don't ring at 3am. Only criticals are sleep-disrupting.
         priority: |
-          status == "firing" ? (labels.severity == "critical" ? "urgent" : "high") : "low"
+          status == "firing" ? (labels.severity == "critical" ? "urgent" : "low") : "low"
         tags:
           - tag: rotating_light
             condition: status == "firing"
