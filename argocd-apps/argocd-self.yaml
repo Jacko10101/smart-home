@@ -22,10 +22,14 @@ spec:
     automated:
       # DO NOT prune — accidentally removing a manifest must not let ArgoCD delete itself.
       prune: false
-      selfHeal: true
+      # selfHeal disabled so we can hand-patch ArgoCD's own StatefulSet (e.g. raise
+      # memory limits) without ArgoCD reverting the change to upstream defaults.
+      # Re-enable + move overrides into a kustomization once we have time.
+      selfHeal: false
     syncOptions:
       - ServerSideApply=true
       - ApplyOutOfSyncOnly=true
+      - RespectIgnoreDifferences=true
     retry:
       limit: 5
       backoff:
