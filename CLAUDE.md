@@ -2,6 +2,17 @@
 
 Personal smart-home automation running on a single Raspberry Pi 5 with k3s. Built and operated solo. The code in this repo is the source of truth for everything that runs on the cluster.
 
+## North star
+
+The goal is a **resilient, smart, useful, elegant, fully-local** smart home. Every decision — device choice, integration, automation, infra change — gets weighed against these, in roughly this order:
+
+- **Fully local — no cloud, ever.** Every integration works with the internet unplugged. No vendor clouds (no Nabu Casa Cloud, no Tuya, no Hue Bridge cloud features, no Ring/Nest), no cloud-only devices, no cloud APIs in the critical path. If a device only works via someone else's server, it does not go in. Tailscale for remote access is fine because the home keeps working when it's down.
+- **Resilient.** Survives reboots, power blips, k3s upgrades, a dead SSD, and Jack being away for a month. Failures are observable (alerting actually reaches a phone) and recoverable (off-pi backups, idempotent GitOps, physical fallbacks for anything safety-critical like heating).
+- **Smart and useful.** Automations have to pay rent — presence-driven lighting, real heating logic, NVR with actual detection. Not just remote-controlled bulbs that need a phone to toggle.
+- **Elegant.** Few moving parts. Boring, well-understood tech preferred over the newest thing. Given two designs that achieve the same outcome, pick the one with fewer components and clearer failure modes. No accidental complexity.
+
+**Decision lens:** would this still work if Anthropic, AWS, Nabu Casa, the vendor's servers, and the household's upstream ISP all went dark simultaneously? If not, redesign.
+
 ## Quick orientation
 
 - **Pi access**: `ssh pi` (alias for `raspi` / `raspberry`) → user `admin`, host `192.168.1.235`. `kubectl` requires `sudo` because k3s config is root-readable only.
@@ -24,8 +35,7 @@ Personal smart-home automation running on a single Raspberry Pi 5 with k3s. Buil
 3. Once the parent syncs, individual app sync behavior varies:
    - `kube-prometheus-stack`: auto-sync + self-heal ON. Inline Helm values in `argocd-apps/kube-prometheus-stack.yaml`.
    - All others (`home-assistant`, `zigbee2mqtt`, `mosquitto`, `backup`): no syncPolicy — manual sync only.
-4. **`applications/kube-prometheus-stack/prometheus-rules/smart-home-alerts.yaml` is NOT in ArgoCD.** It was applied manually 142+ days ago and any changes must be applied by hand: `cat <file> | ssh pi 'sudo kubectl apply -f -'`. Fix is queued (task #16).
-5. **`applications/kube-prometheus-stack/values.yaml` is orphaned** — nothing references it. The real values live inline in `argocd-apps/kube-prometheus-stack.yaml`. Don't edit the orphaned file.
+4. **`smart-home-alerts.yaml` IS in ArgoCD** via `argocd-apps/smart-home-alerts.yaml` (auto-sync + self-heal). Commit changes to `applications/kube-prometheus-stack/prometheus-rules/smart-home-alerts.yaml` and they reconcile automatically — no manual `kubectl apply` needed.
 
 ## Verified gotchas
 
@@ -74,9 +84,6 @@ ssh pi 'sudo kubectl patch application -n argocd argocd --type merge -p "{\"oper
 
 # Sync a specific app (replace <name>)
 ssh pi 'sudo kubectl patch application -n argocd <name> --type merge -p "{\"operation\":{\"sync\":{}}}"'
-
-# Apply the manually-managed PrometheusRule (until task #16 done)
-cat applications/kube-prometheus-stack/prometheus-rules/smart-home-alerts.yaml | ssh pi 'sudo kubectl apply -f -'
 ```
 
 ## Working style with this user
@@ -84,3 +91,4 @@ cat applications/kube-prometheus-stack/prometheus-rules/smart-home-alerts.yaml |
 - Lead with the concrete answer (URL, command, credential, file path). Skip generic explanations — he built the infra, he just doesn't remember the specifics between sessions.
 - He explicitly wants candid critique when asked for opinions, not vague validation. Specific named problems beat general praise.
 - He wants the foundations rock-solid *before* scaling devices. Current vision: full house lights, heating, motion/presence sensors, 4 security cameras, all local, all resilient.
+- **Apply the North Star (above) as a filter, not a slogan.** When recommending a device, integration, or design: if it requires a cloud, say so explicitly and propose a local alternative. If it adds a moving part without earning it, flag the simpler version. If it creates a new single-point-of-failure, name it.
