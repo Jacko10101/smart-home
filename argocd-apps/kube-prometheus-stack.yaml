@@ -17,6 +17,10 @@ spec:
 
         grafana:
           enabled: true
+          admin:
+            existingSecret: grafana-admin-creds
+            userKey: admin-user
+            passwordKey: admin-password
           service:
             type: NodePort
             nodePort: 31300
@@ -56,13 +60,18 @@ spec:
                 memory: 768Mi
                 cpu: 100m
             serviceMonitorSelector: {}
+            # Mount the HA bearer token as a file inside /etc/prometheus/secrets/
+            secrets:
+              - home-assistant-prom-token
             additionalScrapeConfigs:
               - job_name: 'home-assistant'
                 scrape_interval: 30s
                 static_configs:
                   - targets: ['home-assistant.home-assistant.svc.cluster.local:8123']
                 metrics_path: /api/prometheus
-                bearer_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI1YWIyM2Q1OGYzZTM0YTQwOWJkMTI0NmYzZjA0OTg3YyIsImlhdCI6MTczNjExMTM2NiwiZXhwIjoyMDUxNDcxMzY2fQ.65KR65-QVqunPkDD21GRHiiVxwXxaJEfnPZP3MWBtgg"
+                authorization:
+                  type: Bearer
+                  credentials_file: /etc/prometheus/secrets/home-assistant-prom-token/token
 
         alertmanager:
           enabled: true

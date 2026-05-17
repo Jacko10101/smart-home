@@ -18,20 +18,12 @@ spec:
       initContainers:
         - name: init-data-dir
           image: busybox:1.37
-          command: ['sh', '-c', 'cp /config/configuration.yaml /data/ && chmod 777 /data/configuration.yaml']
+          # USB perms are handled on the host by the udev rule at
+          # /etc/udev/rules.d/99-zigbee.rules — no privileged init container needed.
+          command: ['sh', '-c', 'cp /config/configuration.yaml /data/ && chmod 777 /data/configuration.yaml && chown -R 1000:1000 /data']
           volumeMounts:
             - name: config
               mountPath: /config
-            - name: data
-              mountPath: /data
-        - name: fix-usb-permissions
-          image: busybox:1.37
-          command: ['sh', '-c', 'chown root:18 /dev_host/ttyUSB0 && chmod 660 /dev_host/ttyUSB0 && chown -R 1000:1000 /data']
-          securityContext:
-            privileged: true
-          volumeMounts:
-            - name: host-dev
-              mountPath: /dev_host
             - name: data
               mountPath: /data
       containers:
@@ -86,9 +78,6 @@ spec:
           hostPath:
             path: /dev/ttyUSB0
             type: CharDevice
-        - name: host-dev
-          hostPath:
-            path: /dev
         - name: config
           configMap:
             name: zigbee2mqtt-config
