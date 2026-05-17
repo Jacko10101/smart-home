@@ -10,11 +10,15 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/argoproj/argo-cd.git'
-    path: manifests
-    targetRevision: v3.4.2
-    directory:
-      include: 'install.yaml'
+    # Vendored upstream install.yaml at applications/argocd/install.yaml
+    # (Was fetching from github.com/argoproj/argo-cd but the clone times out
+    # over our slow WiFi link. Local path is instant.)
+    # To upgrade: replace install.yaml with the new version's manifest:
+    #   curl -O https://raw.githubusercontent.com/argoproj/argo-cd/<TAG>/manifests/install.yaml
+    # ArgoCD-version: v3.4.2  # update both this and the file when upgrading
+    repoURL: 'https://github.com/Jacko10101/smart-home.git'
+    path: applications/argocd
+    targetRevision: HEAD
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: argocd
