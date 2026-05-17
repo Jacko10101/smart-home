@@ -15,36 +15,8 @@ spec:
       values: |
         fullnameOverride: "prometheus"
 
-        # === Grafana toggle ===
-        # Disabled by default — HA's UI covers day-to-day visibility for home
-        # automation, Grafana is mainly for k8s/Prometheus deep-dives. Flip to
-        # true and re-sync if needed.
         grafana:
           enabled: false
-          admin:
-            existingSecret: grafana-admin-creds
-            userKey: admin-user
-            passwordKey: admin-password
-          service:
-            type: NodePort
-            nodePort: 31300
-            annotations:
-              tailscale.com/expose: "true"
-          resources:
-            limits:
-              memory: 512Mi
-              cpu: 300m
-            requests:
-              memory: 256Mi
-              cpu: 30m
-          sidecar:
-            resources:
-              limits:
-                memory: 128Mi
-                cpu: 100m
-              requests:
-                memory: 64Mi
-                cpu: 10m
 
         prometheus:
           service:

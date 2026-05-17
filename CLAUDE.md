@@ -16,14 +16,13 @@ The goal is a **resilient, smart, useful, elegant, fully-local** smart home. Eve
 ## Quick orientation
 
 - **Pi access**: `ssh pi` (alias for `raspi` / `raspberry`) → user `admin`, host `192.168.1.235`. `kubectl` requires `sudo` because k3s config is root-readable only.
-- **What's running**: Home Assistant, Zigbee2MQTT, Mosquitto (MQTT broker), ArgoCD (GitOps), kube-prometheus-stack (Prometheus + Grafana + Alertmanager), nightly backup CronJob.
+- **What's running**: Home Assistant, Zigbee2MQTT, Mosquitto (MQTT broker), ArgoCD (GitOps), kube-prometheus-stack (Prometheus + Alertmanager; Grafana disabled), nightly backup CronJob.
 - **Service URLs on the LAN** (these are all NodePort, NOT the in-cluster ports the upstream docs suggest):
   | Service | URL |
   |---|---|
   | Home Assistant | `http://192.168.1.235:31123` |
   | Zigbee2MQTT | `http://192.168.1.235:31678` |
   | ArgoCD | `http://192.168.1.235:30113` |
-  | Grafana | `http://192.168.1.235:31300` |
   | Prometheus | `http://192.168.1.235:31090` |
   | Alertmanager | `http://192.168.1.235:30723` |
 - **mDNS `homeassistant.local` does NOT broadcast** on this network — always use the IP.
