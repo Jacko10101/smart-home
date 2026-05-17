@@ -25,7 +25,7 @@ Perfect for both tech enthusiasts looking to self-host their smart home AND anyo
 ### The Devices
 
 #### Ambient Lighting
-- **Bedroom**: 6x Philips Hue Color E14 bulbs featuring:
+- **Living Room**: 6x Philips Hue Color E14 bulbs featuring:
  - Wake Up: Gentle sunrise simulation
  - Gaming: Immersive RGB lighting
  - Movie Mode: Perfect ambient lighting for films
@@ -48,7 +48,7 @@ Innr Smart Plugs with real-time power monitoring:
 
 #### Security & Safety
 - Reolink outdoor camera (solar powered)
-- Bedroom motion detection
+- Living room motion detection
 - Window contact sensing
 - All accessible securely from anywhere via Tailscale VPN
 
