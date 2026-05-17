@@ -18,7 +18,7 @@ spec:
       containers:
         - name: alertmanager-ntfy
           image: ghcr.io/alexbakker/alertmanager-ntfy:1.2.1
-          args: ["-c", "/config/config.yml"]
+          args: ["--configs", "/config/config.yml"]
           ports:
             - containerPort: 8000
               name: http
