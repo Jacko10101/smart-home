@@ -1,16 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: argocd
+  name: smart-home-alerts
   namespace: argocd
 spec:
   source:
     repoURL: 'https://github.com/Jacko10101/smart-home.git'
-    path: argocd-apps
+    path: applications/kube-prometheus-stack/prometheus-rules
     targetRevision: HEAD
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: argocd
+    namespace: monitoring
   project: default
   syncPolicy:
     automated:

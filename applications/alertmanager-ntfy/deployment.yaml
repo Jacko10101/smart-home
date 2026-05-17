@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alertmanager-ntfy
+  namespace: monitoring
+  labels:
+    app: alertmanager-ntfy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alertmanager-ntfy
+  template:
+    metadata:
+      labels:
+        app: alertmanager-ntfy
+    spec:
+      containers:
+        - name: alertmanager-ntfy
+          image: ghcr.io/alexbakker/alertmanager-ntfy:v0.5.0
+          args: ["-c", "/config/config.yml"]
+          ports:
+            - containerPort: 8000
+              name: http
+          volumeMounts:
+            - name: config
+              mountPath: /config
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 30
+      volumes:
+        - name: config
+          configMap:
+            name: alertmanager-ntfy-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alertmanager-ntfy
+  namespace: monitoring
+spec:
+  selector:
+    app: alertmanager-ntfy
+  ports:
+    - port: 8000
+      targetPort: 8000
+      name: http

@@ -96,11 +96,11 @@ spec:
               - name: 'null'
               - name: 'ntfy-critical'
                 webhook_configs:
-                  - url: 'https://ntfy.sh/jack-smarthome-050101'
+                  - url: 'http://alertmanager-ntfy.monitoring.svc.cluster.local:8000/hook'
                     send_resolved: true
               - name: 'ntfy-warnings'
                 webhook_configs:
-                  - url: 'https://ntfy.sh/jack-smarthome-050101'
+                  - url: 'http://alertmanager-ntfy.monitoring.svc.cluster.local:8000/hook'
                     send_resolved: true
           alertmanagerSpec:
             resources:
