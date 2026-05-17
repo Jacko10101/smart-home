@@ -32,18 +32,18 @@ spec:
               tailscale.com/expose: "true"
           resources:
             limits:
-              memory: 256Mi
-              cpu: 200m
+              memory: 512Mi
+              cpu: 300m
             requests:
-              memory: 128Mi
+              memory: 256Mi
               cpu: 30m
           sidecar:
             resources:
               limits:
-                memory: 96Mi
+                memory: 128Mi
                 cpu: 100m
               requests:
-                memory: 48Mi
+                memory: 64Mi
                 cpu: 10m
 
         prometheus:
