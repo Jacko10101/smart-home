@@ -1,5 +1,5 @@
-# Claude context file (contains credentials)
-CLAUDE.md
+# Local-only Claude notes (anything containing credentials goes here, not in CLAUDE.md)
+CLAUDE.local.md
 
 # Secrets - NEVER commit these
 **/secrets.yaml
