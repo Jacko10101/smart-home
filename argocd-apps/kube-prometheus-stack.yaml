@@ -15,6 +15,10 @@ spec:
       values: |
         fullnameOverride: "prometheus"
 
+        # === Grafana toggle ===
+        # Flip `enabled` to false to free ~500MB RAM. HA's UI covers most
+        # day-to-day visibility for home automation; Grafana is mainly for
+        # k8s/Prometheus introspection.
         grafana:
           enabled: true
           admin:
@@ -28,18 +32,18 @@ spec:
               tailscale.com/expose: "true"
           resources:
             limits:
-              memory: 512Mi
-              cpu: 300m
+              memory: 256Mi
+              cpu: 200m
             requests:
-              memory: 200Mi
-              cpu: 50m
+              memory: 128Mi
+              cpu: 30m
           sidecar:
             resources:
               limits:
-                memory: 128Mi
+                memory: 96Mi
                 cpu: 100m
               requests:
-                memory: 64Mi
+                memory: 48Mi
                 cpu: 10m
 
         prometheus:
@@ -50,14 +54,17 @@ spec:
               tailscale.com/expose: "true"
           prometheusSpec:
             routePrefix: /
-            retention: 14d
-            retentionSize: 8GB
+            # Trimmed retention: was 14d/8GB. For a smart-home cluster,
+            # 3 days of metrics is plenty for debugging — Prometheus is for
+            # alerting, not long-term analytics.
+            retention: 3d
+            retentionSize: 2GB
             resources:
               limits:
-                memory: 1536Mi
+                memory: 1024Mi
                 cpu: 500m
               requests:
-                memory: 768Mi
+                memory: 512Mi
                 cpu: 100m
             serviceMonitorSelector: {}
             # Mount the HA bearer token as a file inside /etc/prometheus/secrets/
