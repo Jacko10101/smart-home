@@ -71,7 +71,11 @@ spec:
                 - match:
                     severity: critical
                   receiver: 'ntfy-critical'
-                  repeat_interval: 1h
+                  # 6h repeat - was 1h, which sent 14+ phone buzzes overnight when
+                  # a single critical alert (z2m sensors dead-battery) ran for 14h.
+                  # 6h gives 4 buzzes/day max while a real issue is unresolved;
+                  # for one-off events the first 1-2 buzzes get the message across.
+                  repeat_interval: 6h
                 - match:
                     severity: warning
                   receiver: 'ntfy-warnings'

@@ -136,6 +136,21 @@ spec:
             summary: "No successful backup in over 36 hours"
             description: "Last successful backup was more than 36h ago. Daily backup CronJob may be failing silently."
 
+    - name: smart-home-batteries
+      rules:
+        # Catch zigbee sensors with battery drain BEFORE they go silent. The 2 SONOFF
+        # SNZB-02D temp sensors died on 2026-05-18 reporting 10% — we'd have caught
+        # the slow decline with this alert and avoided ~16h of dead-sensor data.
+        # Phones excluded (their batteries drop and recover all day).
+        - alert: LowBattery
+          expr: homeassistant_sensor_battery_percent{entity!~".*iphone.*|.*_phone_.*"} < 20
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Battery low: {{ $labels.entity }} at {{ $value }}%"
+            description: "Replace battery in {{ $labels.friendly_name }}. Below ~5% the device typically stops reporting and looks like a network failure (not a battery issue)."
+
     - name: smart-home-silent-failures
       rules:
         # Pi rebooted (or watchdog fired) — would have caught the March 12 → May 15 outage IF an alert was wired up

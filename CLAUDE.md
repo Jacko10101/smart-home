@@ -70,7 +70,7 @@ Direction, not commitments. Don't push toward these until foundations work above
 - **Whole-house lighting.** Open to the wall-switch + dumb-bulb pattern (keep physical control + zigbee dimmer behind it). Currently only living room is wired.
 - **Smart TRV in one room first.** Boiler thermostat is upstream and out of scope. Heating is high-stakes — physical fallback (manual TRV behaviour when system is down) is a hard requirement.
 - **Presence/motion/temp sensors throughout.** mmWave (Aqara FP2 etc.) preferred over PIR for presence accuracy.
-- **Window contact sensors.** None paired yet.
+- **Window contact sensors.** `bedroom_window` SONOFF sensor is paired (IEEE `0x00124b002fa64513`, battery 100%) but is **missing the magnet half** so it can't actually detect open/closed. Find or replace the magnet, then more sensors elsewhere.
 - **HA recorder → MariaDB/Postgres.** Defer until close to ~30 entities. Currently sqlite ~11MB, fine.
 - **Remote access.** No fixed answer yet. Tailscale was tried and removed; revisit when there's a real use case.
 
