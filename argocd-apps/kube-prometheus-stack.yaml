@@ -98,6 +98,17 @@ spec:
               requests:
                 memory: 64Mi
                 cpu: 20m
+            # PVC for alertmanager data dir. Without this it's emptyDir, which
+            # wipes silences + notification dedup state on every pod restart.
+            # That bit us on 2026-05-18: a rolling restart erased a 48h silence
+            # mid-outage and the same alert started buzzing the phone again.
+            storage:
+              volumeClaimTemplate:
+                spec:
+                  accessModes: ["ReadWriteOnce"]
+                  resources:
+                    requests:
+                      storage: 1Gi
 
         # K3s combines control-plane components, so the upstream-default
         # alerts for these always fire as false positives. Disable them.
