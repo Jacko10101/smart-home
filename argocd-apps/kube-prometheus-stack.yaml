@@ -90,6 +90,16 @@ spec:
                 webhook_configs:
                   - url: 'http://alertmanager-ntfy.monitoring.svc.cluster.local:8000/hook'
                     send_resolved: true
+            inhibit_rules:
+              # If a sensor is reporting low battery, suppress the broader
+              # "no zigbee updates" alert - we already know the cause and
+              # there's no value re-buzzing the phone about it. Auto-clears
+              # when batteries are replaced and LowBattery resolves.
+              - source_matchers:
+                  - alertname="LowBattery"
+                target_matchers:
+                  - alertname="Zigbee2MQTTNoUpdates"
+                equal: []
           alertmanagerSpec:
             resources:
               limits:
