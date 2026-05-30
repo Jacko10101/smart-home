@@ -63,7 +63,12 @@ spec:
               group_wait: 30s
               group_interval: 5m
               repeat_interval: 4h
-              receiver: 'ntfy-warnings'
+              # Default receiver is 'null': nothing pages unless it explicitly
+              # matches the warning or critical route below. This flips the posture
+              # from "page everything not excluded" to "only page actionable
+              # severities" — kills InfoInhibitor / info / none housekeeping noise
+              # at the source instead of playing whack-a-mole.
+              receiver: 'null'
               routes:
                 - match:
                     alertname: Watchdog
@@ -89,16 +94,52 @@ spec:
               - name: 'ntfy-warnings'
                 webhook_configs:
                   - url: 'http://alertmanager-ntfy.monitoring.svc.cluster.local:8000/hook'
-                    send_resolved: true
+                    # Warnings don't send a "resolved" notification — a warning
+                    # quietly clearing isn't worth a tray entry, and during a
+                    # recovery storm send_resolved doubles the message count.
+                    # Criticals DO keep send_resolved (you want to know a real
+                    # problem actually cleared).
+                    send_resolved: false
             inhibit_rules:
-              # If a sensor is reporting low battery, suppress the broader
-              # "no zigbee updates" alert - we already know the cause and
-              # there's no value re-buzzing the phone about it. Auto-clears
-              # when batteries are replaced and LowBattery resolves.
+              # NOTE: helm REPLACES the chart's default inhibit_rules wholesale
+              # (it does not merge). The three blocks below are the restored
+              # upstream defaults — without them you get a critical AND all its
+              # collateral warnings during one outage. Keep them when editing.
               - source_matchers:
-                  - alertname="LowBattery"
+                  - 'severity = "critical"'
                 target_matchers:
-                  - alertname="Zigbee2MQTTNoUpdates"
+                  - 'severity =~ "warning|info"'
+                equal: ['namespace', 'alertname']
+              - source_matchers:
+                  - 'severity = "warning"'
+                target_matchers:
+                  - 'severity = "info"'
+                equal: ['namespace', 'alertname']
+              - source_matchers:
+                  - 'alertname = "InfoInhibitor"'
+                target_matchers:
+                  - 'severity = "info"'
+                equal: ['namespace']
+
+              # Smart-home: a sensor reporting low battery suppresses the broader
+              # "no zigbee updates" alert - we already know the cause and there's
+              # no value re-buzzing the phone. Auto-clears when LowBattery resolves.
+              - source_matchers:
+                  - 'alertname = "LowBattery"'
+                target_matchers:
+                  - 'alertname = "Zigbee2MQTTNoUpdates"'
+                equal: []
+
+              # Reboot-storm collapse: while the Pi is freshly rebooted (PiRebooted
+              # fires for the first ~10min after boot), suppress the inevitable flood
+              # of "everything is down / not ready" alerts. Result: ONE "Pi rebooted"
+              # notification instead of fifteen. If something stays genuinely broken,
+              # PiRebooted resolves at the 10min mark and the real alert fires then —
+              # so this delays, never hides, a real failure.
+              - source_matchers:
+                  - 'alertname = "PiRebooted"'
+                target_matchers:
+                  - 'alertname =~ "HomeAssistantDown|Zigbee2MQTTDown|MosquittoDown|Zigbee2MQTTBridgeOffline|Zigbee2MQTTNoUpdates|PodNotReady|PodRestartLoop|KubePodNotReady|KubePodCrashLooping|KubeContainerWaiting|KubeDeploymentReplicasMismatch|KubeStatefulSetReplicasMismatch|KubeJobFailed|TargetDown|KubeNodeNotReady|KubeletDown"'
                 equal: []
           alertmanagerSpec:
             resources:
