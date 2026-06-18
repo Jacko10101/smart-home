@@ -52,9 +52,31 @@ The goal is a **resilient, smart, useful, elegant, fully-local** smart home. Eve
   - `warning`: 4h.
 - **Alertmanager state persists** to a 1Gi PVC. Without it (the prior emptyDir setup) every pod restart wiped silences + notification dedup state — silences would evaporate mid-outage.
 - **Inhibit rule:** `LowBattery` firing suppresses `Zigbee2MQTTNoUpdates` — when we already know a sensor's battery is dying, the "no zigbee updates" alert tells us nothing new. Auto-clears when batteries are replaced.
+- **Note (2026-06-18):** there are currently **no battery Zigbee devices** (all removed), so `LowBattery` / `Zigbee2MQTTNoUpdates` have nothing to watch until battery sensors are re-added.
+
+## Zigbee devices & the living-room automation POC
+
+**Current Zigbee inventory (all mains/USB — zero batteries):**
+- 6× Hue White & Color E14 bulbs → `group.living_room_lights`.
+- `living_room_presence` — SONOFF **SNZB-06P mmWave** occupancy sensor (USB-powered). Exposes `binary_sensor.living_room_presence_occupancy` + `sensor.living_room_presence_illumination` (dim/bright). `occupancy_timeout` = 30s.
+- `living_room_tv` — SP 242 plug on the TV. **Switch-only and never switched** (`power_on_behavior=on`; TV stays powered). Energy metering is junk (see gotcha).
+- `hallway_lamp` — SP 242 plug (`switch.hallway_lamp`).
+- `kitchen_heater`, `dining_room_tv` — SP 242 plugs physically **MISSING**; still in z2m (show unavailable in HA). Locate or remove.
+- **Removed 2026-06-18:** both SNZB-02D temp/humidity sensors + the SNZB-03 PIR (dead batteries; mmWave replaces the PIR) and the SNZB-04 contact sensor (binned — no magnet).
+
+**Living-room presence-lighting POC** (`automations.yaml`, mmWave-driven):
+- `lr_presence_lights_on`: occupancy→on AND `sun.sun` `below_horizon` AND lights off → warm lights (brightness 115, `color_temp` 454 ≈ 2200K). Gated on the **sun**, not the 06P illumination (see gotcha).
+- `lr_presence_lights_off`: occupancy off for 3 min → lights off. No TV-power guard (mmWave holds a still viewer; SP 242 metering unreliable). **Verified 2026-06-18:** fires ~3 min after the room empties.
+- The dashboard "Auto Lighting" card toggles both automations (family pause switch).
+- Movie-mode by TV-power sensing is **shelved** — the SP 242 can't measure the TV. `Movie` stays a one-tap scene.
+
+**Dashboard:** 2 tabs (Home, Lights), YAML mode, HACS Mushroom cards. Climate/Energy tabs removed (temp sensors gone, SP 242 metering unusable).
 
 ## Verified gotchas
 
+- **z2m device rename does NOT change the HA entity_id.** HA freezes an MQTT-discovered entity's `entity_id` at first discovery (keyed on `unique_id`). Rename a z2m device *after* HA has already seen it and HA keeps the old id — often `0x<IEEE>_*`. Fixes: rename in z2m **before** first HA discovery, or rename the HA entity via the registry (`config/entity_registry/update` over the websocket API; the prom token has admin). The `living_room_presence` / `living_room_tv` entities came in as `0x..._*` and had to be registry-renamed. Registry renames live in `.storage/core.entity_registry` (in the daily backup, **not** git).
+- **SP 242 (Tuya UK) plug energy metering is garbage.** `current` pins at 13A and `power` reads ~0–2W under a real ~100W load (verified on the live TV). Useless for power sensing / the Energy dashboard. Switching still works fine.
+- **SNZB-06P `illumination` (dim/bright) lags and is circular** — it senses the very lights an automation controls, so it reads `bright` for a beat after lights-off, which caused missed auto-on turn-ons. Gate lighting on `sun.sun` `below_horizon`, not this sensor.
 - **Zigbee2MQTT CrashLoopBackOff after pi reboot — FIXED 2026-06-11 via host udev rule.** Historically: the `fix-usb-permissions` init container chowns `/dev/ttyUSB0` to `root:18`, but only runs on pod creation; after a host reboot udev recreated the device as `root:dialout` and the chown never re-ran. Now `/etc/udev/rules.d/99-zigbee-dongle.rules` on the host (`SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", GROUP="18", MODE="0660"`) sets `root:18` on every device (re)creation — verified end-to-end by breaking perms and re-triggering udev. If z2m ever crashloops on serial perms again, check this rule still exists; manual fallback: `ssh pi 'sudo kubectl rollout restart deployment/zigbee2mqtt -n zigbee'`.
 - **HA password reset requires a pod restart.** `hass --script auth change_password` writes to `/config/.storage/auth_provider.homeassistant` on disk, but the running HA process holds the credential cache in memory. Login keeps returning `invalid_auth` until the pod is restarted.
 - **HA configmap uses `subPath` mounts** for `configuration.yaml`, `scenes.yaml`, `automations.yaml`, `ui-lovelace.yaml`. ConfigMap updates do NOT propagate to the running pod with subPath mounts. After editing `applications/home-assistant/configmap.yaml`, restart the deployment.
@@ -90,10 +112,10 @@ Direction, not commitments. Don't push toward these until foundations work is so
 - **Security cameras (×4).** Reolink PoE → Frigate via Coral USB accelerator. Lives on the new compute node, not the Pi.
 - **Whole-house lighting.** Wall-switch + dumb-bulb pattern preferred (always-on physical control + zigbee dimming behind it). Family home — ~20–30 switches.
 - **Heating per room.** Smart TRV per radiator; boiler control depends on what's upstream and may be out of scope. High-stakes — physical fallback (TRV behaves like a normal valve when system is down) is a hard requirement.
-- **Presence sensors throughout.** mmWave (Aqara FP2 etc.) for major rooms, PIR for transit zones.
+- **Presence sensors throughout.** mmWave (Aqara FP2 etc.) for major rooms, PIR for transit zones. **Living room done (2026-06-18):** SNZB-06P mmWave drives the presence-lighting POC — the template to replicate per room.
 - **Local voice control.** HA Voice Preview Edition satellites or DIY Wyoming protocol — depends on compute node choice.
 - **Whole-home energy monitoring.** Shelly EM on the consumer unit so HA's Energy dashboard works at house level, not just per-plug.
-- **Window contact sensors.** `bedroom_window` SONOFF sensor is paired (IEEE `0x00124b002fa64513`) but **missing the magnet half**, so it can't actually sense open/closed. Find magnet or replace, then expand.
+- **Window contact sensors.** The `bedroom_window` SONOFF SNZB-04 (IEEE `0x00124b002fa64513`) was **removed/binned 2026-06-18** (missing magnet half). Re-add with a fresh contact sensor when expanding.
 - **HA recorder → MariaDB/Postgres** before ~30 entities.
 - **Remote access.** No fixed answer yet. Tailscale was tried and removed; revisit when there's a real use case.
 
