@@ -672,18 +672,15 @@ data:
             transition: 2
       mode: single
 
-    - alias: "LR: Lights off when room empty (TV-aware)"
+    - alias: "LR: Lights off when room empty"
       id: lr_presence_lights_off
       trigger:
         - platform: state
           entity_id: binary_sensor.living_room_presence_occupancy
           to: "off"
           for: "00:03:00"
-      condition:
-        # don't kill the lights while the TV is drawing power (someone's watching)
-        - condition: numeric_state
-          entity_id: sensor.living_room_tv_power
-          below: 8
+      # No TV-power guard: this plug's metering is unreliable, and mmWave already
+      # holds presence for anyone watching (even dead still), so empty == empty.
       action:
         - service: light.turn_off
           target:
