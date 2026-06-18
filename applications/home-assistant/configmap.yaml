@@ -55,24 +55,22 @@ data:
           - type: grid
             cards:
               - type: custom:mushroom-chips-card
+                alignment: center
                 chips:
                   - type: weather
                     entity: weather.forecast_home
                     show_temperature: true
                     show_conditions: true
                   - type: template
-                    icon: mdi:thermometer
-                    content: "{{ states('sensor.living_room_sensor_temperature') }}°C"
-                    tap_action:
-                      action: navigate
-                      navigation_path: /lovelace/climate
+                    icon: "{{ 'mdi:motion-sensor' if is_state('binary_sensor.living_room_presence_occupancy','on') else 'mdi:motion-sensor-off' }}"
+                    icon_color: "{{ 'green' if is_state('binary_sensor.living_room_presence_occupancy','on') else 'grey' }}"
+                    content: "{{ 'Occupied' if is_state('binary_sensor.living_room_presence_occupancy','on') else 'Empty' }}"
                   - type: template
                     icon: mdi:lightbulb-group
-                    content: "{{ states.light | selectattr('state', 'eq', 'on') | list | count }}"
+                    content: "{{ states.light | selectattr('state','eq','on') | list | count }} on"
                     tap_action:
                       action: navigate
                       navigation_path: /lovelace/lights
-                alignment: center
 
           - type: grid
             cards:
@@ -133,60 +131,49 @@ data:
                 title: Living Room
               - type: custom:mushroom-template-card
                 primary: Lights
-                secondary: "{{ states.light | selectattr('entity_id', 'search', 'living_room') | selectattr('state', 'eq', 'on') | list | count }} of 6 on"
+                secondary: "{{ states.light | selectattr('entity_id','search','living_room') | selectattr('state','eq','on') | list | count }} of 6 on"
                 icon: mdi:sofa
-                icon_color: "{% if states.light | selectattr('entity_id', 'search', 'living_room') | selectattr('state', 'eq', 'on') | list | count > 0 %}amber{% else %}disabled{% endif %}"
+                icon_color: "{% if states.light | selectattr('entity_id','search','living_room') | selectattr('state','eq','on') | list | count > 0 %}amber{% else %}disabled{% endif %}"
                 tap_action:
                   action: navigate
                   navigation_path: /lovelace/lights
               - type: custom:mushroom-entity-card
-                entity: sensor.living_room_sensor_temperature
-                name: Temperature
-                icon_color: red
-              - type: custom:mushroom-entity-card
-                entity: binary_sensor.living_room_motion_occupancy
-                name: Motion
+                entity: binary_sensor.living_room_presence_occupancy
+                name: Presence
                 icon: mdi:motion-sensor
+              - type: custom:mushroom-entity-card
+                entity: sensor.living_room_presence_illumination
+                name: Room Light
+                icon: mdi:theme-light-dark
 
           - type: grid
             cards:
               - type: custom:mushroom-title-card
-                title: Plugs
-              - type: horizontal-stack
-                cards:
-                  - type: custom:mushroom-entity-card
-                    entity: switch.hallway_lamp
-                    name: Lamp
-                    icon: mdi:lamp
-                    icon_color: amber
-                    tap_action:
-                      action: toggle
-                    layout: vertical
-                  - type: custom:mushroom-entity-card
-                    entity: switch.kitchen_heater
-                    name: Heater
-                    icon: mdi:radiator
-                    icon_color: red
-                    tap_action:
-                      action: toggle
-                    layout: vertical
-                  - type: custom:mushroom-entity-card
-                    entity: switch.dining_room_tv
-                    name: TV
-                    icon: mdi:television
-                    icon_color: blue
-                    tap_action:
-                      action: toggle
-                    layout: vertical
+                title: Auto Lighting
+              - type: custom:mushroom-template-card
+                primary: Presence Lighting
+                secondary: "{{ 'Active' if is_state('automation.lr_lights_on_when_someone_enters_a_dim_room','on') else 'Paused' }}"
+                icon: mdi:lightbulb-auto
+                icon_color: "{{ 'green' if is_state('automation.lr_lights_on_when_someone_enters_a_dim_room','on') else 'grey' }}"
+                tap_action:
+                  action: call-service
+                  service: automation.toggle
+                  target:
+                    entity_id:
+                      - automation.lr_lights_on_when_someone_enters_a_dim_room
+                      - automation.lr_lights_off_when_room_empty
 
           - type: grid
             cards:
               - type: custom:mushroom-title-card
-                title: Security
+                title: Switches
               - type: custom:mushroom-entity-card
-                entity: binary_sensor.living_room_motion_occupancy
-                name: Motion
-                icon: mdi:motion-sensor
+                entity: switch.hallway_lamp
+                name: Hallway Lamp
+                icon: mdi:lamp
+                icon_color: amber
+                tap_action:
+                  action: toggle
 
       # ===== LIGHTS TAB =====
       - title: Lights
@@ -319,123 +306,6 @@ data:
                 show_brightness_control: true
                 show_color_control: true
                 collapsible_controls: true
-
-      # ===== CLIMATE TAB =====
-      - title: Climate
-        path: climate
-        icon: mdi:thermometer
-        type: sections
-        sections:
-          - type: grid
-            cards:
-              - type: custom:mushroom-title-card
-                title: Temperature
-              - type: custom:mushroom-entity-card
-                entity: sensor.living_room_sensor_temperature
-                name: Living Room
-                icon: mdi:thermometer
-                icon_color: red
-              - type: custom:mushroom-entity-card
-                entity: sensor.hallway_sensor_temperature
-                name: Hallway
-                icon: mdi:thermometer
-                icon_color: orange
-
-          - type: grid
-            cards:
-              - type: custom:mushroom-title-card
-                title: Humidity
-              - type: custom:mushroom-entity-card
-                entity: sensor.living_room_sensor_humidity
-                name: Living Room
-                icon: mdi:water-percent
-                icon_color: blue
-              - type: custom:mushroom-entity-card
-                entity: sensor.hallway_sensor_humidity
-                name: Hallway
-                icon: mdi:water-percent
-                icon_color: cyan
-
-          - type: grid
-            cards:
-              - type: custom:mushroom-title-card
-                title: Heater Control
-              - type: custom:mushroom-entity-card
-                entity: switch.kitchen_heater
-                name: Kitchen Heater
-                icon: mdi:radiator
-                icon_color: red
-                tap_action:
-                  action: toggle
-
-          - type: grid
-            cards:
-              - type: custom:mushroom-title-card
-                title: Temperature History
-              - type: history-graph
-                hours_to_show: 24
-                entities:
-                  - entity: sensor.living_room_sensor_temperature
-                    name: Living Room
-                  - entity: sensor.hallway_sensor_temperature
-                    name: Hallway
-
-      # ===== ENERGY TAB =====
-      - title: Energy
-        path: energy
-        icon: mdi:lightning-bolt
-        type: sections
-        sections:
-          - type: grid
-            cards:
-              - type: custom:mushroom-title-card
-                title: Current Power
-              - type: custom:mushroom-entity-card
-                entity: sensor.hallway_lamp_power
-                name: Hallway Lamp
-                icon: mdi:lamp
-                icon_color: amber
-              - type: custom:mushroom-entity-card
-                entity: sensor.kitchen_heater_power
-                name: Kitchen Heater
-                icon: mdi:radiator
-                icon_color: red
-              - type: custom:mushroom-entity-card
-                entity: sensor.dining_room_tv_power
-                name: Dining Room TV
-                icon: mdi:television
-                icon_color: blue
-
-          - type: grid
-            cards:
-              - type: custom:mushroom-title-card
-                title: Total Energy Used
-              - type: custom:mushroom-entity-card
-                entity: sensor.hallway_lamp_energy
-                name: Hallway Lamp
-                icon: mdi:counter
-              - type: custom:mushroom-entity-card
-                entity: sensor.kitchen_heater_energy
-                name: Kitchen Heater
-                icon: mdi:counter
-              - type: custom:mushroom-entity-card
-                entity: sensor.dining_room_tv_energy
-                name: Dining Room TV
-                icon: mdi:counter
-
-          - type: grid
-            cards:
-              - type: custom:mushroom-title-card
-                title: Power History (24h)
-              - type: history-graph
-                hours_to_show: 24
-                entities:
-                  - entity: sensor.hallway_lamp_power
-                    name: Lamp
-                  - entity: sensor.kitchen_heater_power
-                    name: Heater
-                  - entity: sensor.dining_room_tv_power
-                    name: TV
 
   scenes.yaml: |
     - name: "Wake Up"
@@ -598,8 +468,6 @@ data:
           state: 'on'
           brightness: 255
           rgb_color: [134, 0, 56]
-        switch.dining_room_tv:
-          state: 'on'
         switch.hallway_lamp:
           state: 'off'
 
@@ -608,8 +476,6 @@ data:
         group.living_room_lights:
           state: 'off'
         switch.hallway_lamp:
-          state: 'off'
-        switch.dining_room_tv:
           state: 'off'
 
   automations.yaml: |
@@ -654,10 +520,12 @@ data:
           entity_id: binary_sensor.living_room_presence_occupancy
           to: "on"
       condition:
-        # only when the room is actually dim (skips daytime)...
+        # gate on darkness via the sun, NOT the 06P illumination: that sensor lags
+        # and reads 'bright' for a beat after the lights switch off (it's affected by
+        # the very lights this rule controls), which caused missed turn-ons.
         - condition: state
-          entity_id: sensor.living_room_presence_illumination
-          state: "dim"
+          entity_id: sun.sun
+          state: "below_horizon"
         # ...and only if the lights are off, so we never override a chosen scene
         - condition: state
           entity_id: group.living_room_lights
@@ -667,8 +535,8 @@ data:
           target:
             entity_id: group.living_room_lights
           data:
-            brightness: 150
-            color_temp: 370
+            brightness: 115          # ~45% — soft, not bright
+            color_temp: 454          # ~2200K — warm
             transition: 2
       mode: single
 
