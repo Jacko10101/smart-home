@@ -259,6 +259,48 @@ data:
                       data:
                         entity_id: scene.cavs_game
                     layout: vertical
+              - type: horizontal-stack
+                cards:
+                  - type: custom:mushroom-template-card
+                    primary: Golden Hour
+                    icon: mdi:weather-sunset
+                    icon_color: orange
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.golden_hour
+                    layout: vertical
+                  - type: custom:mushroom-template-card
+                    primary: Candlelight
+                    icon: mdi:candle
+                    icon_color: amber
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.candlelight
+                    layout: vertical
+                  - type: custom:mushroom-template-card
+                    primary: Focus
+                    icon: mdi:white-balance-iridescent
+                    icon_color: light-blue
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.focus
+                    layout: vertical
+                  - type: custom:mushroom-template-card
+                    primary: Tranquil
+                    icon: mdi:waves
+                    icon_color: teal
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.tranquil
+                    layout: vertical
 
           - type: grid
             cards:
@@ -313,7 +355,7 @@ data:
         group.living_room_lights:
           state: 'on'
           brightness: 1
-          color_temp: 500
+          rgb_color: [255, 130, 40]
           transition: 1200
         switch.hallway_lamp:
           state: 'on'
@@ -323,8 +365,117 @@ data:
         group.living_room_lights:
           state: 'on'
           brightness: 255
-          color_temp: 250
+          rgb_color: [255, 250, 244]
           transition: 5
+
+    - name: "Golden Hour"
+      entities:
+        light.living_room_left_1:
+          state: 'on'
+          brightness: 200
+          rgb_color: [255, 110, 20]
+        light.living_room_left_2:
+          state: 'on'
+          brightness: 200
+          rgb_color: [255, 110, 20]
+        light.living_room_middle_1:
+          state: 'on'
+          brightness: 175
+          rgb_color: [255, 160, 55]
+        light.living_room_middle_2:
+          state: 'on'
+          brightness: 175
+          rgb_color: [255, 160, 55]
+        light.living_room_right_1:
+          state: 'on'
+          brightness: 200
+          rgb_color: [255, 85, 15]
+        light.living_room_right_2:
+          state: 'on'
+          brightness: 200
+          rgb_color: [255, 85, 15]
+
+    - name: "Evening Relax"
+      entities:
+        group.living_room_lights:
+          state: 'on'
+          brightness: 128
+          rgb_color: [255, 140, 50]
+          transition: 5
+        switch.hallway_lamp:
+          state: 'on'
+
+    - name: "Candlelight"
+      entities:
+        group.living_room_lights:
+          state: 'on'
+          brightness: 42
+          rgb_color: [255, 110, 30]
+          transition: 3
+        switch.hallway_lamp:
+          state: 'off'
+
+    - name: "Night Reading"
+      entities:
+        light.living_room_middle_1:
+          state: 'on'
+          brightness: 160
+          rgb_color: [255, 185, 110]
+        light.living_room_middle_2:
+          state: 'on'
+          brightness: 160
+          rgb_color: [255, 185, 110]
+        light.living_room_left_1:
+          state: 'on'
+          brightness: 50
+          rgb_color: [255, 150, 70]
+        light.living_room_left_2:
+          state: 'on'
+          brightness: 50
+          rgb_color: [255, 150, 70]
+        light.living_room_right_1:
+          state: 'on'
+          brightness: 50
+          rgb_color: [255, 150, 70]
+        light.living_room_right_2:
+          state: 'on'
+          brightness: 50
+          rgb_color: [255, 150, 70]
+
+    - name: "Focus"
+      entities:
+        group.living_room_lights:
+          state: 'on'
+          brightness: 255
+          rgb_color: [225, 238, 255]
+          transition: 2
+
+    - name: "Tranquil"
+      entities:
+        light.living_room_left_1:
+          state: 'on'
+          brightness: 120
+          rgb_color: [0, 140, 170]
+        light.living_room_left_2:
+          state: 'on'
+          brightness: 120
+          rgb_color: [0, 140, 170]
+        light.living_room_middle_1:
+          state: 'on'
+          brightness: 120
+          rgb_color: [20, 70, 160]
+        light.living_room_middle_2:
+          state: 'on'
+          brightness: 120
+          rgb_color: [20, 70, 160]
+        light.living_room_right_1:
+          state: 'on'
+          brightness: 120
+          rgb_color: [0, 160, 150]
+        light.living_room_right_2:
+          state: 'on'
+          brightness: 120
+          rgb_color: [0, 160, 150]
 
     - name: "Gaming Mode"
       entities:
@@ -377,43 +528,6 @@ data:
           state: 'off'
         switch.hallway_lamp:
           state: 'off'
-
-    - name: "Evening Relax"
-      entities:
-        group.living_room_lights:
-          state: 'on'
-          brightness: 128
-          color_temp: 500
-          transition: 5
-        switch.hallway_lamp:
-          state: 'on'
-
-    - name: "Night Reading"
-      entities:
-        light.living_room_middle_1:
-          state: 'on'
-          brightness: 150
-          color_temp: 400
-        light.living_room_middle_2:
-          state: 'on'
-          brightness: 150
-          color_temp: 400
-        light.living_room_left_1:
-          state: 'on'
-          brightness: 50
-          color_temp: 500
-        light.living_room_left_2:
-          state: 'on'
-          brightness: 50
-          color_temp: 500
-        light.living_room_right_1:
-          state: 'on'
-          brightness: 50
-          color_temp: 500
-        light.living_room_right_2:
-          state: 'on'
-          brightness: 50
-          color_temp: 500
 
     - name: "Party Mode"
       entities:
@@ -535,8 +649,8 @@ data:
           target:
             entity_id: group.living_room_lights
           data:
-            brightness: 115          # ~45% — soft, not bright
-            color_temp: 454          # ~2200K — warm
+            brightness: 115            # ~45% — soft, not bright
+            rgb_color: [255, 160, 85]  # warm white — bulbs reject color_temp via z2m
             transition: 2
       mode: single
 
