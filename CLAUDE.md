@@ -15,16 +15,17 @@ The goal is a **resilient, smart, useful, elegant, fully-local** smart home. Eve
 
 ## Quick orientation
 
-- **Pi access**: `ssh pi` (alias for `raspi` / `raspberry`) → user `admin`, host `192.168.1.235`. `kubectl` requires `sudo` because k3s config is root-readable only.
+- **Pi access**: `ssh pi` (alias for `raspi` / `raspberry`) → user `admin`, now over **wired eth0 at `192.168.1.229`** (default route is via eth0). `ssh pi-wifi` is the fallback over onboard WiFi (`192.168.1.235`). `kubectl` requires `sudo` because k3s config is root-readable only.
+  - `.229` is a **DHCP lease** (eth0 MAC `2c:cf:67:6d:23:0d`, gateway `.254`). **TODO: reserve it on the router** so the alias/URLs don't break on lease renewal. Until then, if `ssh pi` fails, re-check the eth0 IP via `ssh pi-wifi 'ip -br addr show eth0'`.
 - **What's running**: Home Assistant, Zigbee2MQTT, Mosquitto (MQTT broker), ArgoCD (GitOps), kube-prometheus-stack (Prometheus + Alertmanager; Grafana disabled), alertmanager-ntfy adapter, daily backup CronJob.
-- **Service URLs on the LAN** (NodePort, not the in-cluster ports the upstream docs suggest):
-  | Service | URL |
+- **Service URLs on the LAN** (NodePort, not the in-cluster ports the upstream docs suggest). NodePorts answer on **both** Pi IPs — prefer wired `.229`; `.235` (WiFi) works as fallback:
+  | Service | URL (wired) |
   |---|---|
-  | Home Assistant | `http://192.168.1.235:31123` |
-  | Zigbee2MQTT | `http://192.168.1.235:31678` |
-  | ArgoCD | `http://192.168.1.235:30113` |
-  | Prometheus | `http://192.168.1.235:31090` |
-  | Alertmanager | `http://192.168.1.235:30723` |
+  | Home Assistant | `http://192.168.1.229:31123` |
+  | Zigbee2MQTT | `http://192.168.1.229:31678` |
+  | ArgoCD | `http://192.168.1.229:30113` |
+  | Prometheus | `http://192.168.1.229:31090` |
+  | Alertmanager | `http://192.168.1.229:30723` |
 - **mDNS `homeassistant.local` does NOT broadcast** on this network — always use the IP.
 - **No remote access currently configured.** LAN only.
 
@@ -75,7 +76,7 @@ The goal is a **resilient, smart, useful, elegant, fully-local** smart home. Eve
 
 ## Currently fragile
 
-1. **Pi is on WiFi**, not ethernet. `eth0` is NO-CARRIER (cable physically disconnected). All traffic goes via brcmfmac driver, which spammed errors before every recorded multi-month hang. Suspected root cause; powerline adapters or a wired run is the planned mitigation.
+1. **Uplink is now wired (2026-06-18).** `eth0` (`.229`) runs to a WiFi extender that backhauls to the router; the extender sits on the UPS. Default route is via eth0, so the Pi no longer depends on its onboard `brcmfmac` WiFi for the uplink — that driver spammed errors before every recorded multi-month hang and is the suspected freeze root cause, so this is the leading mitigation (not yet validated over time). Onboard `wlan0` (`.235`) stays up as a fallback path. Remaining weak links: (a) the extender's backhaul to the router may itself be wireless — confirm it's solid or run a clean wired line to the router; (b) `.229` is an unreserved DHCP lease (see Quick orientation TODO).
 2. **Backups are on the same NVMe as the data they're backing up.** Disk dies → backups die. Off-pi target (LAN device + offsite USB rotation) is the planned shape; no cloud target (violates North Star).
 3. **systemd watchdog is enabled** (`RuntimeWatchdogSec=30s` via `/etc/systemd/system.conf.d/watchdog.conf`) — hard hangs auto-reboot within 30 seconds. Mitigation, not root-cause fix.
 
