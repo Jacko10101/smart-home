@@ -643,3 +643,51 @@ data:
         - service: scene.turn_on
           target:
             entity_id: scene.evening_relax
+
+    # ===== Living Room presence-lighting POC (mmWave-driven) =====
+    # Uses living_room_presence (SNZB-06P) only — the PIR is dead and mmWave
+    # holds presence while still, so no lights-off-on-a-still-person.
+    - alias: "LR: Lights on when someone enters a dim room"
+      id: lr_presence_lights_on
+      trigger:
+        - platform: state
+          entity_id: binary_sensor.living_room_presence_occupancy
+          to: "on"
+      condition:
+        # only when the room is actually dim (skips daytime)...
+        - condition: state
+          entity_id: sensor.living_room_presence_illumination
+          state: "dim"
+        # ...and only if the lights are off, so we never override a chosen scene
+        - condition: state
+          entity_id: group.living_room_lights
+          state: "off"
+      action:
+        - service: light.turn_on
+          target:
+            entity_id: group.living_room_lights
+          data:
+            brightness: 150
+            color_temp: 370
+            transition: 2
+      mode: single
+
+    - alias: "LR: Lights off when room empty (TV-aware)"
+      id: lr_presence_lights_off
+      trigger:
+        - platform: state
+          entity_id: binary_sensor.living_room_presence_occupancy
+          to: "off"
+          for: "00:03:00"
+      condition:
+        # don't kill the lights while the TV is drawing power (someone's watching)
+        - condition: numeric_state
+          entity_id: sensor.living_room_tv_power
+          below: 8
+      action:
+        - service: light.turn_off
+          target:
+            entity_id: group.living_room_lights
+          data:
+            transition: 3
+      mode: single
