@@ -15,17 +15,17 @@ The goal is a **resilient, smart, useful, elegant, fully-local** smart home. Eve
 
 ## Quick orientation
 
-- **Pi access**: `ssh pi` (alias for `raspi` / `raspberry`) → user `admin`, now over **wired eth0 at `192.168.1.229`** (default route is via eth0). `ssh pi-wifi` is the fallback over onboard WiFi (`192.168.1.235`). `kubectl` requires `sudo` because k3s config is root-readable only.
-  - `.229` is a **DHCP lease** (eth0 MAC `2c:cf:67:6d:23:0d`, gateway `.254`). **TODO: reserve it on the router** so the alias/URLs don't break on lease renewal. Until then, if `ssh pi` fails, re-check the eth0 IP via `ssh pi-wifi 'ip -br addr show eth0'`.
+- **Pi access**: `ssh pi` (alias for `raspi` / `raspberry`) → user `admin`, over **wired eth0 at `192.168.1.235`** — the *only* network path now (onboard WiFi is disabled, see Currently fragile). `kubectl` requires `sudo` because k3s config is root-readable only.
+  - `.235` is **reserved at the BT hub** (eth0 MAC `2c:cf:67:6d:23:0d`) **and** pinned in k3s (`/etc/rancher/k3s/config.yaml` → `node-ip: 192.168.1.235`). It won't drift. (History: the IP musical-chaired `.229`/`.230`/`.235` on 2026-06-19/20 before this was locked down.)
 - **What's running**: Home Assistant, Zigbee2MQTT, Mosquitto (MQTT broker), ArgoCD (GitOps), kube-prometheus-stack (Prometheus + Alertmanager; Grafana disabled), alertmanager-ntfy adapter, daily backup CronJob.
-- **Service URLs on the LAN** (NodePort, not the in-cluster ports the upstream docs suggest). NodePorts answer on **both** Pi IPs — prefer wired `.229`; `.235` (WiFi) works as fallback:
-  | Service | URL (wired) |
+- **Service URLs on the LAN** (NodePort, not the in-cluster ports the upstream docs suggest):
+  | Service | URL |
   |---|---|
-  | Home Assistant | `http://192.168.1.229:31123` |
-  | Zigbee2MQTT | `http://192.168.1.229:31678` |
-  | ArgoCD | `http://192.168.1.229:30113` |
-  | Prometheus | `http://192.168.1.229:31090` |
-  | Alertmanager | `http://192.168.1.229:30723` |
+  | Home Assistant | `http://192.168.1.235:31123` |
+  | Zigbee2MQTT | `http://192.168.1.235:31678` |
+  | ArgoCD | `http://192.168.1.235:30113` |
+  | Prometheus | `http://192.168.1.235:31090` |
+  | Alertmanager | `http://192.168.1.235:30723` |
 - **mDNS `homeassistant.local` does NOT broadcast** on this network — always use the IP.
 - **No remote access currently configured.** LAN only.
 
@@ -74,6 +74,7 @@ The goal is a **resilient, smart, useful, elegant, fully-local** smart home. Eve
 
 ## Verified gotchas
 
+- **k3s `node-ip` drifts with DHCP unless pinned.** With no `node-ip` set, k3s registers whatever IP it sees at startup. When the DHCP lease later moved (`.229`→`.235`), k3s kept the **stale `.229`** as node InternalIP *and* the `kubernetes` API endpoint → a cascade of `TargetDown` / `KubeletInstanceUnreachable` / `KubeAPIInstanceUnreachable` / operator watch-errors (the home kept working — only monitoring broke). Fix: `node-ip: <ip>` in `/etc/rancher/k3s/config.yaml` + `sudo systemctl restart k3s`, **then** `kubectl rollout restart` the monitoring deployments/statefulsets so they reconnect to the corrected endpoint. Now pinned to `.235`.
 - **z2m device rename does NOT change the HA entity_id.** HA freezes an MQTT-discovered entity's `entity_id` at first discovery (keyed on `unique_id`). Rename a z2m device *after* HA has already seen it and HA keeps the old id — often `0x<IEEE>_*`. Fixes: rename in z2m **before** first HA discovery, or rename the HA entity via the registry (`config/entity_registry/update` over the websocket API; the prom token has admin). The `living_room_presence` / `living_room_tv` entities came in as `0x..._*` and had to be registry-renamed. Registry renames live in `.storage/core.entity_registry` (in the daily backup, **not** git).
 - **SP 242 (Tuya UK) plug energy metering is garbage.** `current` pins at 13A and `power` reads ~0–2W under a real ~100W load (verified on the live TV). Useless for power sensing / the Energy dashboard. Switching still works fine.
 - **SNZB-06P `illumination` (dim/bright) lags and is circular** — it senses the very lights an automation controls, so it reads `bright` for a beat after lights-off, which caused missed auto-on turn-ons. Gate lighting on `sun.sun` `below_horizon`, not this sensor.
@@ -99,7 +100,7 @@ The goal is a **resilient, smart, useful, elegant, fully-local** smart home. Eve
 
 ## Currently fragile
 
-1. **Uplink is now wired (2026-06-18).** `eth0` (`.229`) runs to a WiFi extender that backhauls to the router; the extender sits on the UPS. Default route is via eth0, so the Pi no longer depends on its onboard `brcmfmac` WiFi for the uplink — that driver spammed errors before every recorded multi-month hang and is the suspected freeze root cause, so this is the leading mitigation (not yet validated over time). Onboard `wlan0` (`.235`) stays up as a fallback path. Remaining weak links: (a) the extender's backhaul to the router may itself be wireless — confirm it's solid or run a clean wired line to the router; (b) `.229` is an unreserved DHCP lease (see Quick orientation TODO).
+1. **Uplink is wired; onboard WiFi disabled (2026-06-20).** `eth0` (`.235`, reserved at the BT hub + pinned via k3s `node-ip`) runs to a BT WiFi Disc that backhauls to the router; the disc is on the UPS. **Onboard `wlan0` is disabled** (`sudo nmcli radio wifi off`, persists; re-enable with `nmcli radio wifi on`) — it was the source of DHCP churn (its lease drifted and bounced the Pi's IP twice in a day) and is the prime freeze suspect (`brcmfmac`). The Pi now has a single, stable network path. Remaining: (a) confirm the disc's backhaul to the router is solid — it's a mesh disc, check the BT app (suspected source of the *household* WiFi blips, separate from the Pi); (b) `nmcli radio wifi off` deactivates the radio but leaves the `brcmfmac` driver loaded — for full freeze-suspect removal, `dtoverlay=disable-wifi` in `/boot/firmware/config.txt` + reboot kills the chip at firmware level; (c) the freeze fix (wired + WiFi off) is still unvalidated over time — uptime is the proof. As of 2026-06-20 the Pi has been up ~2 days with no freeze.
 2. **Backups are on the same NVMe as the data they're backing up.** Disk dies → backups die. Off-pi target (LAN device + offsite USB rotation) is the planned shape; no cloud target (violates North Star).
 3. **systemd watchdog is enabled** (`RuntimeWatchdogSec=30s` via `/etc/systemd/system.conf.d/watchdog.conf`) — hard hangs auto-reboot within 30 seconds. Mitigation, not root-cause fix.
 
