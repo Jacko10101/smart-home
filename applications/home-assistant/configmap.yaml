@@ -205,6 +205,50 @@ data:
           - type: grid
             cards:
               - type: custom:mushroom-title-card
+                title: Utility Room
+              - type: custom:mushroom-light-card
+                entity: light.utility_light
+                name: Utility Light
+                use_light_color: true
+                show_brightness_control: true
+                show_color_control: true
+                collapsible_controls: true
+              - type: horizontal-stack
+                cards:
+                  - type: custom:mushroom-template-card
+                    primary: Bright
+                    icon: mdi:lightbulb-on
+                    icon_color: amber
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.utility_bright
+                    layout: vertical
+                  - type: custom:mushroom-template-card
+                    primary: Warm
+                    icon: mdi:lightbulb-on-outline
+                    icon_color: orange
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.utility_warm
+                    layout: vertical
+                  - type: custom:mushroom-template-card
+                    primary: 'Off'
+                    icon: mdi:lightbulb-off
+                    icon_color: grey
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.utility_off
+                    layout: vertical
+
+          - type: grid
+            cards:
+              - type: custom:mushroom-title-card
                 title: Auto Lighting
               - type: custom:mushroom-template-card
                 primary: Presence Lighting
@@ -499,6 +543,50 @@ data:
                       service: scene.turn_on
                       data:
                         entity_id: scene.bedroom_colourloop
+                    layout: vertical
+
+          - type: grid
+            cards:
+              - type: custom:mushroom-title-card
+                title: Utility Room
+              - type: custom:mushroom-light-card
+                entity: light.utility_light
+                name: Utility Light
+                use_light_color: true
+                show_brightness_control: true
+                show_color_control: true
+                collapsible_controls: true
+              - type: horizontal-stack
+                cards:
+                  - type: custom:mushroom-template-card
+                    primary: Bright
+                    icon: mdi:lightbulb-on
+                    icon_color: amber
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.utility_bright
+                    layout: vertical
+                  - type: custom:mushroom-template-card
+                    primary: Warm
+                    icon: mdi:lightbulb-on-outline
+                    icon_color: orange
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.utility_warm
+                    layout: vertical
+                  - type: custom:mushroom-template-card
+                    primary: 'Off'
+                    icon: mdi:lightbulb-off
+                    icon_color: grey
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.utility_off
                     layout: vertical
 
   scenes.yaml: |
@@ -811,6 +899,29 @@ data:
         light.bedroom_light:
           state: 'off'
           transition: 3
+
+    # ===== Utility room (light.utility_light) — transit room by the front door =====
+    - name: "Utility Bright"
+      entities:
+        light.utility_light:
+          state: 'on'
+          brightness: 254
+          rgb_color: [255, 245, 235]
+          transition: 1
+
+    - name: "Utility Warm"
+      entities:
+        light.utility_light:
+          state: 'on'
+          brightness: 120
+          rgb_color: [255, 160, 85]
+          transition: 2
+
+    - name: "Utility Off"
+      entities:
+        light.utility_light:
+          state: 'off'
+          transition: 2
 
   automations.yaml: |
     - alias: "Workday Wake Up"
