@@ -515,6 +515,16 @@ data:
                         entity_id: scene.bedroom_sunset
                     layout: vertical
                   - type: custom:mushroom-template-card
+                    primary: Cycle
+                    icon: mdi:looks
+                    icon_color: purple
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.bedroom_colour_cycle
+                    layout: vertical
+                  - type: custom:mushroom-template-card
                     primary: 'Off'
                     icon: mdi:lightbulb-off
                     icon_color: grey
@@ -853,6 +863,13 @@ data:
           brightness: 150
           rgb_color: [255, 95, 80]
           transition: 3
+
+    - name: "Bedroom Colour Cycle"     # animated — slowly loops through the colour wheel
+      entities:
+        light.bedroom_light:
+          state: 'on'
+          brightness: 200
+          effect: colorloop
 
     - name: "Bedroom Off"
       entities:

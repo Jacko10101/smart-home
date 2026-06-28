@@ -61,7 +61,7 @@ The goal is a **resilient, smart, useful, elegant, fully-local** smart home. Eve
 - 2× Hue White & Color Ambiance **B22** bulbs (model 9290024896; z2m labels them "E27" but they're the B22 twin pack), both onboarded 2026-06-28, `power_on_behavior=off`, RGB only (same `color_temp`-rejection gotcha as the E14s):
   - `bedroom_light` — IEEE `0x001788010daadc60` → HA `light.bedroom_light`.
   - `utility_light` — IEEE `0x001788010daadca8` → HA `light.utility_light`. Utility room by the front door (2nd fridge, pet food); dad's in/out transit point — **prime presence-sensor candidate** (like the LR POC), no sensor yet.
-  - NB: this firmware **does** expose working Hue `effect`s over z2m (candle/fireplace/sunset/colorloop/etc.), but they're **not used in any scene** — Jack dislikes moving/animated colours, so bedroom scenes are 5 distinct *static* RGB looks (Bright/Warm/Nightlight/Calm/Sunset).
+  - NB: this firmware **does** expose working Hue `effect`s over z2m (candle/fireplace/sunset/colorloop/etc.). Bedroom scenes = 5 distinct *static* RGB looks (Bright/Warm/Nightlight/Calm/Sunset) + a `Colour Cycle` scene using the `colorloop` effect. To clear an effect back to static, send `{"effect":"none"}` (the `effect` attribute otherwise lingers stale in HA even after a plain colour command).
 - `living_room_presence` — SONOFF **SNZB-06P mmWave** occupancy sensor (USB-powered). Exposes `binary_sensor.living_room_presence_occupancy` + `sensor.living_room_presence_illumination` (dim/bright). `occupancy_timeout` = 30s.
 - `living_room_tv` — SP 242 plug on the TV. **Switch-only and never switched** (`power_on_behavior=on`; TV stays powered). Energy metering is junk (see gotcha).
 - `hallway_lamp` — SP 242 plug (`switch.hallway_lamp`).
