@@ -37,6 +37,9 @@ spec:
               mountPath: /config/automations.yaml
               subPath: automations.yaml
             - name: ha-config
+              mountPath: /config/scripts.yaml
+              subPath: scripts.yaml
+            - name: ha-config
               mountPath: /config/ui-lovelace.yaml
               subPath: ui-lovelace.yaml
           livenessProbe:
