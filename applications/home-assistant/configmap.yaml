@@ -149,6 +149,62 @@ data:
           - type: grid
             cards:
               - type: custom:mushroom-title-card
+                title: Bedroom
+              - type: custom:mushroom-light-card
+                entity: light.bedroom_light
+                name: Bedroom Light
+                use_light_color: true
+                show_brightness_control: true
+                show_color_control: true
+                collapsible_controls: true
+              - type: horizontal-stack
+                cards:
+                  - type: custom:mushroom-template-card
+                    primary: Relax
+                    icon: mdi:sofa
+                    icon_color: orange
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.bedroom_relax
+                    layout: vertical
+                  - type: custom:mushroom-template-card
+                    primary: Reading
+                    icon: mdi:book-open-variant
+                    icon_color: lime
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.bedroom_reading
+                    layout: vertical
+                  - type: custom:mushroom-template-card
+                    primary: Nightlight
+                    icon: mdi:weather-night
+                    icon_color: deep-orange
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.bedroom_nightlight
+                    layout: vertical
+              - type: custom:mushroom-template-card
+                primary: Sunrise Wake-Up
+                secondary: "{{ 'On — weekdays 08:00' if is_state('automation.bedroom_sunrise_wake_up','on') else 'Paused' }}"
+                icon: mdi:weather-sunset-up
+                icon_color: "{{ 'amber' if is_state('automation.bedroom_sunrise_wake_up','on') else 'grey' }}"
+                tap_action:
+                  action: call-service
+                  service: automation.toggle
+                  target:
+                    entity_id:
+                      - automation.bedroom_sunrise_wake_up
+                      - automation.bedroom_wake_up_auto_off
+
+          - type: grid
+            cards:
+              - type: custom:mushroom-title-card
                 title: Auto Lighting
               - type: custom:mushroom-template-card
                 primary: Presence Lighting
@@ -348,6 +404,102 @@ data:
                 show_brightness_control: true
                 show_color_control: true
                 collapsible_controls: true
+
+          - type: grid
+            cards:
+              - type: custom:mushroom-title-card
+                title: Bedroom
+              - type: custom:mushroom-light-card
+                entity: light.bedroom_light
+                name: Bedroom Light
+                use_light_color: true
+                show_brightness_control: true
+                show_color_control: true
+                collapsible_controls: true
+              - type: horizontal-stack
+                cards:
+                  - type: custom:mushroom-template-card
+                    primary: Relax
+                    icon: mdi:sofa
+                    icon_color: orange
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.bedroom_relax
+                    layout: vertical
+                  - type: custom:mushroom-template-card
+                    primary: Reading
+                    icon: mdi:book-open-variant
+                    icon_color: lime
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.bedroom_reading
+                    layout: vertical
+                  - type: custom:mushroom-template-card
+                    primary: Nightlight
+                    icon: mdi:weather-night
+                    icon_color: deep-orange
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.bedroom_nightlight
+                    layout: vertical
+                  - type: custom:mushroom-template-card
+                    primary: Cool Focus
+                    icon: mdi:white-balance-iridescent
+                    icon_color: light-blue
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.bedroom_cool_focus
+                    layout: vertical
+              - type: horizontal-stack
+                cards:
+                  - type: custom:mushroom-template-card
+                    primary: Candle
+                    icon: mdi:candle
+                    icon_color: amber
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.bedroom_candle
+                    layout: vertical
+                  - type: custom:mushroom-template-card
+                    primary: Fireplace
+                    icon: mdi:fireplace
+                    icon_color: deep-orange
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.bedroom_fireplace
+                    layout: vertical
+                  - type: custom:mushroom-template-card
+                    primary: Sunset
+                    icon: mdi:weather-sunset
+                    icon_color: orange
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.bedroom_sunset
+                    layout: vertical
+                  - type: custom:mushroom-template-card
+                    primary: Colourloop
+                    icon: mdi:looks
+                    icon_color: pink
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.bedroom_colourloop
+                    layout: vertical
 
   scenes.yaml: |
     - name: "Wake Up"
@@ -592,6 +744,74 @@ data:
         switch.hallway_lamp:
           state: 'off'
 
+    # ===== Bedroom (light.bedroom_light) — RGB only; bulb rejects color_temp via z2m =====
+    - name: "Bedroom Relax"
+      entities:
+        light.bedroom_light:
+          state: 'on'
+          brightness: 100
+          rgb_color: [255, 140, 50]
+          transition: 3
+
+    - name: "Bedroom Reading"
+      entities:
+        light.bedroom_light:
+          state: 'on'
+          brightness: 220
+          rgb_color: [255, 200, 150]
+          transition: 2
+
+    - name: "Bedroom Nightlight"
+      entities:
+        light.bedroom_light:
+          state: 'on'
+          brightness: 4
+          rgb_color: [255, 85, 20]
+          transition: 3
+
+    - name: "Bedroom Cool Focus"
+      entities:
+        light.bedroom_light:
+          state: 'on'
+          brightness: 255
+          rgb_color: [220, 235, 255]
+          transition: 2
+
+    # Hue firmware effects (verified working over z2m on this bulb)
+    - name: "Bedroom Candle"
+      entities:
+        light.bedroom_light:
+          state: 'on'
+          brightness: 120
+          effect: candle
+
+    - name: "Bedroom Fireplace"
+      entities:
+        light.bedroom_light:
+          state: 'on'
+          brightness: 160
+          effect: fireplace
+
+    - name: "Bedroom Sunset"
+      entities:
+        light.bedroom_light:
+          state: 'on'
+          brightness: 200
+          effect: sunset
+
+    - name: "Bedroom Colourloop"
+      entities:
+        light.bedroom_light:
+          state: 'on'
+          brightness: 220
+          effect: colorloop
+
+    - name: "Bedroom Off"
+      entities:
+        light.bedroom_light:
+          state: 'off'
+          transition: 3
+
   automations.yaml: |
     - alias: "Workday Wake Up"
       trigger:
@@ -669,4 +889,52 @@ data:
             entity_id: group.living_room_lights
           data:
             transition: 3
+      mode: single
+
+    # ===== Bedroom sunrise wake-up (no presence sensor — pure time/weekday) =====
+    # Jack starts work ~08:30 UK most weekdays. Ramp 0 -> full warm over 25 min so
+    # it's fully up by ~08:25. Starting from off, z2m fades brightness up.
+    - alias: "Bedroom Sunrise Wake Up"
+      id: bedroom_sunrise_wake_up
+      trigger:
+        - platform: time
+          at: "08:00:00"
+      condition:
+        - condition: time
+          weekday:
+            - mon
+            - tue
+            - wed
+            - thu
+            - fri
+      action:
+        - service: light.turn_on
+          target:
+            entity_id: light.bedroom_light
+          data:
+            brightness: 254
+            rgb_color: [255, 180, 120]   # warm sunrise glow — bulb rejects color_temp
+            transition: 1500             # 25-min ramp, full by ~08:25
+      mode: single
+
+    # Safety: don't leave the bedroom light burning all day after Jack leaves.
+    - alias: "Bedroom Wake Up Auto Off"
+      id: bedroom_wake_up_auto_off
+      trigger:
+        - platform: time
+          at: "09:15:00"
+      condition:
+        - condition: time
+          weekday:
+            - mon
+            - tue
+            - wed
+            - thu
+            - fri
+      action:
+        - service: light.turn_off
+          target:
+            entity_id: light.bedroom_light
+          data:
+            transition: 5
       mode: single
