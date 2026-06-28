@@ -565,9 +565,9 @@ data:
               - type: custom:mushroom-title-card
                 title: Bedroom Colour Cycle
               - type: custom:mushroom-template-card
-                primary: Colour Cycle
+                primary: "{{ 'Cycle Running' if is_state('input_boolean.bedroom_colour_cycle','on') else 'Cycle Off' }}"
                 secondary: >-
-                  {{ ('Running · ' ~ states('input_select.bedroom_cycle_mode')) if
+                  {{ ('Mode: ' ~ states('input_select.bedroom_cycle_mode')) if
                   is_state('input_boolean.bedroom_colour_cycle','on') else 'Tap to start' }}
                 icon: mdi:looks
                 icon_color: "{{ 'purple' if is_state('input_boolean.bedroom_colour_cycle','on') else 'grey' }}"
@@ -576,15 +576,87 @@ data:
                   service: input_boolean.toggle
                   target:
                     entity_id: input_boolean.bedroom_colour_cycle
-              - type: custom:mushroom-select-card
-                entity: input_select.bedroom_cycle_mode
-                name: Mode
-                icon: mdi:palette
-              - type: custom:mushroom-number-card
-                entity: input_number.bedroom_cycle_speed
-                name: Speed (seconds per step)
-                icon: mdi:speedometer
-                display_mode: slider
+              - type: horizontal-stack
+                cards:
+                  - type: custom:mushroom-template-card
+                    primary: Rainbow
+                    icon: mdi:looks
+                    icon_color: "{{ 'indigo' if is_state('input_select.bedroom_cycle_mode','Rainbow') else 'disabled' }}"
+                    tap_action:
+                      action: call-service
+                      service: input_select.select_option
+                      target:
+                        entity_id: input_select.bedroom_cycle_mode
+                      data:
+                        option: Rainbow
+                    layout: vertical
+                  - type: custom:mushroom-template-card
+                    primary: Warm Glow
+                    icon: mdi:weather-sunset
+                    icon_color: "{{ 'orange' if is_state('input_select.bedroom_cycle_mode','Warm Glow') else 'disabled' }}"
+                    tap_action:
+                      action: call-service
+                      service: input_select.select_option
+                      target:
+                        entity_id: input_select.bedroom_cycle_mode
+                      data:
+                        option: Warm Glow
+                    layout: vertical
+                  - type: custom:mushroom-template-card
+                    primary: Ocean
+                    icon: mdi:waves
+                    icon_color: "{{ 'blue' if is_state('input_select.bedroom_cycle_mode','Ocean') else 'disabled' }}"
+                    tap_action:
+                      action: call-service
+                      service: input_select.select_option
+                      target:
+                        entity_id: input_select.bedroom_cycle_mode
+                      data:
+                        option: Ocean
+                    layout: vertical
+              - type: horizontal-stack
+                cards:
+                  - type: custom:mushroom-template-card
+                    primary: Fire
+                    icon: mdi:fire
+                    icon_color: "{{ 'deep-orange' if is_state('input_select.bedroom_cycle_mode','Fire') else 'disabled' }}"
+                    tap_action:
+                      action: call-service
+                      service: input_select.select_option
+                      target:
+                        entity_id: input_select.bedroom_cycle_mode
+                      data:
+                        option: Fire
+                    layout: vertical
+                  - type: custom:mushroom-template-card
+                    primary: Pastel
+                    icon: mdi:palette-swatch
+                    icon_color: "{{ 'pink' if is_state('input_select.bedroom_cycle_mode','Pastel') else 'disabled' }}"
+                    tap_action:
+                      action: call-service
+                      service: input_select.select_option
+                      target:
+                        entity_id: input_select.bedroom_cycle_mode
+                      data:
+                        option: Pastel
+                    layout: vertical
+                  - type: custom:mushroom-template-card
+                    primary: Party
+                    icon: mdi:party-popper
+                    icon_color: "{{ 'purple' if is_state('input_select.bedroom_cycle_mode','Party') else 'disabled' }}"
+                    tap_action:
+                      action: call-service
+                      service: input_select.select_option
+                      target:
+                        entity_id: input_select.bedroom_cycle_mode
+                      data:
+                        option: Party
+                    layout: vertical
+              - type: entities
+                title: Cycle Speed
+                entities:
+                  - entity: input_number.bedroom_cycle_speed
+                    name: Seconds per step (lower = faster)
 
           - type: grid
             cards:
