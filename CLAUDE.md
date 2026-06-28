@@ -58,7 +58,10 @@ The goal is a **resilient, smart, useful, elegant, fully-local** smart home. Eve
 
 **Current Zigbee inventory (all mains/USB — zero batteries):**
 - 6× Hue White & Color E14 bulbs → `group.living_room_lights`.
-- `bedroom_light` — Hue White & Color Ambiance **B22** bulb (model 9290024896; z2m labels it "E27" but it's the B22 twin pack), IEEE `0x001788010daadc60`. `power_on_behavior=off`. HA: `light.bedroom_light`. Onboarded 2026-06-28. **Twin-pack bulb #2 not yet joined** (room TBC). NB: this firmware **does** expose working Hue `effect`s over z2m (candle/fireplace/sunset/colorloop/etc.) — used in the bedroom scenes. (Same `color_temp`-rejection gotcha as the E14s — RGB only.)
+- 2× Hue White & Color Ambiance **B22** bulbs (model 9290024896; z2m labels them "E27" but they're the B22 twin pack), both onboarded 2026-06-28, `power_on_behavior=off`, RGB only (same `color_temp`-rejection gotcha as the E14s):
+  - `bedroom_light` — IEEE `0x001788010daadc60` → HA `light.bedroom_light`.
+  - `utility_light` — IEEE `0x001788010daadca8` → HA `light.utility_light`. Utility room by the front door (2nd fridge, pet food); dad's in/out transit point — **prime presence-sensor candidate** (like the LR POC), no sensor yet.
+  - NB: this firmware **does** expose working Hue `effect`s over z2m (candle/fireplace/sunset/colorloop/etc.) — used in the bedroom scenes.
 - `living_room_presence` — SONOFF **SNZB-06P mmWave** occupancy sensor (USB-powered). Exposes `binary_sensor.living_room_presence_occupancy` + `sensor.living_room_presence_illumination` (dim/bright). `occupancy_timeout` = 30s.
 - `living_room_tv` — SP 242 plug on the TV. **Switch-only and never switched** (`power_on_behavior=on`; TV stays powered). Energy metering is junk (see gotcha).
 - `hallway_lamp` — SP 242 plug (`switch.hallway_lamp`).
