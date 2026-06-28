@@ -56,6 +56,19 @@ data:
         unit_of_measurement: s
         icon: mdi:speedometer
 
+    input_select:
+      bedroom_cycle_mode:
+        name: Bedroom Cycle Mode
+        options:
+          - Rainbow
+          - Warm Glow
+          - Ocean
+          - Fire
+          - Pastel
+          - Party
+        initial: Rainbow
+        icon: mdi:palette
+
     # Include other configurations
     scene: !include scenes.yaml
     automation: !include automations.yaml
@@ -557,6 +570,10 @@ data:
                       data:
                         entity_id: scene.bedroom_off
                     layout: vertical
+              - type: custom:mushroom-select-card
+                entity: input_select.bedroom_cycle_mode
+                name: Cycle Mode
+                icon: mdi:palette
               - type: custom:mushroom-number-card
                 entity: input_number.bedroom_cycle_speed
                 name: Cycle Speed (sec/step, lower = faster)
@@ -1049,8 +1066,9 @@ data:
       mode: single
 
     # ===== Bedroom colour cycle, driven by HA (bulb's native colorloop doesn't
-    # animate on its firmware). Steps the hue around the wheel while the
-    # input_boolean is on. Speed = seconds per step (lower = faster). =====
+    # animate on its firmware). Steps colour while the input_boolean is on.
+    # Mode = input_select.bedroom_cycle_mode; speed = seconds/step (lower=faster).
+    # Restarts cleanly when the mode is changed mid-cycle. =====
     - alias: "Bedroom Colour Cycle"
       id: bedroom_colour_cycle
       mode: restart
@@ -1058,6 +1076,12 @@ data:
         - platform: state
           entity_id: input_boolean.bedroom_colour_cycle
           to: "on"
+        - platform: state
+          entity_id: input_select.bedroom_cycle_mode
+      condition:
+        - condition: state
+          entity_id: input_boolean.bedroom_colour_cycle
+          state: "on"
       action:
         - repeat:
             while:
@@ -1065,14 +1089,32 @@ data:
                 entity_id: input_boolean.bedroom_colour_cycle
                 state: "on"
             sequence:
+              - variables:
+                  m: "{{ states('input_select.bedroom_cycle_mode') }}"
+                  i: "{{ repeat.index }}"
+                  hue: >
+                    {% if m == 'Warm Glow' %}{{ (i * 10) % 60 }}
+                    {% elif m == 'Ocean' %}{{ 180 + (i * 15) % 100 }}
+                    {% elif m == 'Fire' %}{{ range(8, 40) | random }}
+                    {% elif m in ['Pastel', 'Party'] %}{{ range(0, 360) | random }}
+                    {% else %}{{ (i * 30) % 360 }}{% endif %}
+                  sat: >
+                    {% if m == 'Pastel' %}45
+                    {% elif m == 'Ocean' %}90
+                    {% else %}100{% endif %}
+                  bri: >
+                    {% if m == 'Fire' %}{{ range(35, 95) | random }}
+                    {% elif m == 'Pastel' %}60
+                    {% elif m == 'Party' %}95
+                    {% else %}80{% endif %}
               - service: light.turn_on
                 target:
                   entity_id: light.bedroom_light
                 data:
                   hs_color:
-                    - "{{ (repeat.index * 30) % 360 }}"
-                    - 100
-                  brightness_pct: 80
+                    - "{{ hue | int(0) }}"
+                    - "{{ sat | int(100) }}"
+                  brightness_pct: "{{ bri | int(80) }}"
                   transition: "{{ states('input_number.bedroom_cycle_speed') | float(3) }}"
               - delay:
                   seconds: "{{ states('input_number.bedroom_cycle_speed') | float(3) }}"
