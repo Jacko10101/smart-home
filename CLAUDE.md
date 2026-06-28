@@ -61,7 +61,7 @@ The goal is a **resilient, smart, useful, elegant, fully-local** smart home. Eve
 - 2× Hue White & Color Ambiance **B22** bulbs (model 9290024896; z2m labels them "E27" but they're the B22 twin pack), both onboarded 2026-06-28, `power_on_behavior=off`, RGB only (same `color_temp`-rejection gotcha as the E14s):
   - `bedroom_light` — IEEE `0x001788010daadc60` → HA `light.bedroom_light`.
   - `utility_light` — IEEE `0x001788010daadca8` → HA `light.utility_light`. Utility room by the front door (2nd fridge, pet food); dad's in/out transit point — **prime presence-sensor candidate** (like the LR POC), no sensor yet.
-  - NB: this firmware **does** expose working Hue `effect`s over z2m (candle/fireplace/sunset/colorloop/etc.) — used in the bedroom scenes.
+  - NB: this firmware **does** expose working Hue `effect`s over z2m (candle/fireplace/sunset/colorloop/etc.), but they're **not used in any scene** — Jack dislikes moving/animated colours, so bedroom scenes are 5 distinct *static* RGB looks (Bright/Warm/Nightlight/Calm/Sunset).
 - `living_room_presence` — SONOFF **SNZB-06P mmWave** occupancy sensor (USB-powered). Exposes `binary_sensor.living_room_presence_occupancy` + `sensor.living_room_presence_illumination` (dim/bright). `occupancy_timeout` = 30s.
 - `living_room_tv` — SP 242 plug on the TV. **Switch-only and never switched** (`power_on_behavior=on`; TV stays powered). Energy metering is junk (see gotcha).
 - `hallway_lamp` — SP 242 plug (`switch.hallway_lamp`).
@@ -121,7 +121,7 @@ Direction, not commitments. Don't push toward these until foundations work is so
 - **Presence sensors throughout.** mmWave (Aqara FP2 etc.) for major rooms, PIR for transit zones. **Living room done (2026-06-18):** SNZB-06P mmWave drives the presence-lighting POC — the template to replicate per room.
 - **Local voice control.** HA Voice Preview Edition satellites or DIY Wyoming protocol — depends on compute node choice.
 - **Whole-home energy monitoring.** Shelly EM on the consumer unit so HA's Energy dashboard works at house level, not just per-plug.
-- **Window contact sensors.** The `bedroom_window` SONOFF SNZB-04 (IEEE `0x00124b002fa64513`) was **removed/binned 2026-06-18** (missing magnet half). Re-add with a fresh contact sensor when expanding.
+- **Window contact sensors.** The `bedroom_window` SONOFF SNZB-04 (IEEE `0x00124b002fa64513`) was binned 2026-06-18 (missing magnet half) but lingered in z2m until **force-removed from the z2m registry 2026-06-28**. Re-add with a fresh contact sensor when expanding.
 - **HA recorder → MariaDB/Postgres** before ~30 entities.
 - **Remote access.** No fixed answer yet. Tailscale was tried and removed; revisit when there's a real use case.
 

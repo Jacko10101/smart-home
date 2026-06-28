@@ -160,24 +160,24 @@ data:
               - type: horizontal-stack
                 cards:
                   - type: custom:mushroom-template-card
-                    primary: Relax
-                    icon: mdi:sofa
+                    primary: Bright
+                    icon: mdi:lightbulb-on
+                    icon_color: amber
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.bedroom_bright
+                    layout: vertical
+                  - type: custom:mushroom-template-card
+                    primary: Warm
+                    icon: mdi:lightbulb-on-outline
                     icon_color: orange
                     tap_action:
                       action: call-service
                       service: scene.turn_on
                       data:
-                        entity_id: scene.bedroom_relax
-                    layout: vertical
-                  - type: custom:mushroom-template-card
-                    primary: Reading
-                    icon: mdi:book-open-variant
-                    icon_color: lime
-                    tap_action:
-                      action: call-service
-                      service: scene.turn_on
-                      data:
-                        entity_id: scene.bedroom_reading
+                        entity_id: scene.bedroom_warm
                     layout: vertical
                   - type: custom:mushroom-template-card
                     primary: Nightlight
@@ -463,24 +463,24 @@ data:
               - type: horizontal-stack
                 cards:
                   - type: custom:mushroom-template-card
-                    primary: Relax
-                    icon: mdi:sofa
+                    primary: Bright
+                    icon: mdi:lightbulb-on
+                    icon_color: amber
+                    tap_action:
+                      action: call-service
+                      service: scene.turn_on
+                      data:
+                        entity_id: scene.bedroom_bright
+                    layout: vertical
+                  - type: custom:mushroom-template-card
+                    primary: Warm
+                    icon: mdi:lightbulb-on-outline
                     icon_color: orange
                     tap_action:
                       action: call-service
                       service: scene.turn_on
                       data:
-                        entity_id: scene.bedroom_relax
-                    layout: vertical
-                  - type: custom:mushroom-template-card
-                    primary: Reading
-                    icon: mdi:book-open-variant
-                    icon_color: lime
-                    tap_action:
-                      action: call-service
-                      service: scene.turn_on
-                      data:
-                        entity_id: scene.bedroom_reading
+                        entity_id: scene.bedroom_warm
                     layout: vertical
                   - type: custom:mushroom-template-card
                     primary: Nightlight
@@ -492,42 +492,22 @@ data:
                       data:
                         entity_id: scene.bedroom_nightlight
                     layout: vertical
-                  - type: custom:mushroom-template-card
-                    primary: Cool Focus
-                    icon: mdi:white-balance-iridescent
-                    icon_color: light-blue
-                    tap_action:
-                      action: call-service
-                      service: scene.turn_on
-                      data:
-                        entity_id: scene.bedroom_cool_focus
-                    layout: vertical
               - type: horizontal-stack
                 cards:
                   - type: custom:mushroom-template-card
-                    primary: Candle
-                    icon: mdi:candle
-                    icon_color: amber
+                    primary: Calm
+                    icon: mdi:weather-night-partly-cloudy
+                    icon_color: blue
                     tap_action:
                       action: call-service
                       service: scene.turn_on
                       data:
-                        entity_id: scene.bedroom_candle
-                    layout: vertical
-                  - type: custom:mushroom-template-card
-                    primary: Fireplace
-                    icon: mdi:fireplace
-                    icon_color: deep-orange
-                    tap_action:
-                      action: call-service
-                      service: scene.turn_on
-                      data:
-                        entity_id: scene.bedroom_fireplace
+                        entity_id: scene.bedroom_calm
                     layout: vertical
                   - type: custom:mushroom-template-card
                     primary: Sunset
                     icon: mdi:weather-sunset
-                    icon_color: orange
+                    icon_color: pink
                     tap_action:
                       action: call-service
                       service: scene.turn_on
@@ -535,14 +515,14 @@ data:
                         entity_id: scene.bedroom_sunset
                     layout: vertical
                   - type: custom:mushroom-template-card
-                    primary: Colourloop
-                    icon: mdi:looks
-                    icon_color: pink
+                    primary: 'Off'
+                    icon: mdi:lightbulb-off
+                    icon_color: grey
                     tap_action:
                       action: call-service
                       service: scene.turn_on
                       data:
-                        entity_id: scene.bedroom_colourloop
+                        entity_id: scene.bedroom_off
                     layout: vertical
 
           - type: grid
@@ -832,67 +812,47 @@ data:
         switch.hallway_lamp:
           state: 'off'
 
-    # ===== Bedroom (light.bedroom_light) — RGB only; bulb rejects color_temp via z2m =====
-    - name: "Bedroom Relax"
+    # ===== Bedroom (light.bedroom_light) — RGB only; bulb rejects color_temp via z2m.
+    # Static scenes only (no moving/animated effects); each one visually distinct. =====
+    - name: "Bedroom Bright"            # clean full white — getting dressed / cleaning
       entities:
         light.bedroom_light:
           state: 'on'
-          brightness: 100
-          rgb_color: [255, 140, 50]
-          transition: 3
+          brightness: 254
+          rgb_color: [255, 244, 234]
+          transition: 1
 
-    - name: "Bedroom Reading"
-      entities:
-        light.bedroom_light:
-          state: 'on'
-          brightness: 220
-          rgb_color: [255, 200, 150]
-          transition: 2
-
-    - name: "Bedroom Nightlight"
-      entities:
-        light.bedroom_light:
-          state: 'on'
-          brightness: 4
-          rgb_color: [255, 85, 20]
-          transition: 3
-
-    - name: "Bedroom Cool Focus"
-      entities:
-        light.bedroom_light:
-          state: 'on'
-          brightness: 255
-          rgb_color: [220, 235, 255]
-          transition: 2
-
-    # Hue firmware effects (verified working over z2m on this bulb)
-    - name: "Bedroom Candle"
+    - name: "Bedroom Warm"             # cosy low amber — evening wind-down
       entities:
         light.bedroom_light:
           state: 'on'
           brightness: 120
-          effect: candle
+          rgb_color: [255, 145, 55]
+          transition: 3
 
-    - name: "Bedroom Fireplace"
+    - name: "Bedroom Nightlight"       # very dim deep amber — middle of the night
       entities:
         light.bedroom_light:
           state: 'on'
-          brightness: 160
-          effect: fireplace
+          brightness: 4
+          rgb_color: [255, 75, 15]
+          transition: 3
 
-    - name: "Bedroom Sunset"
+    - name: "Bedroom Calm"             # soft blue — distinct, relaxing
       entities:
         light.bedroom_light:
           state: 'on'
-          brightness: 200
-          effect: sunset
+          brightness: 90
+          rgb_color: [40, 120, 215]
+          transition: 3
 
-    - name: "Bedroom Colourloop"
+    - name: "Bedroom Sunset"           # static warm coral/pink — distinct, no animation
       entities:
         light.bedroom_light:
           state: 'on'
-          brightness: 220
-          effect: colorloop
+          brightness: 150
+          rgb_color: [255, 95, 80]
+          transition: 3
 
     - name: "Bedroom Off"
       entities:
